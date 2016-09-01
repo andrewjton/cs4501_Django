@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'lal1oo!4yq!18@wkfjdurh^9p@lvt*2g8=91kq$8q&5_47f*e)'
+SECRET_KEY = 'om3+4@_5z)8si*pso$+1n-vuc_m8c_+#ooj5n&z_&!ul(zf(7)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -75,13 +75,13 @@ WSGI_APPLICATION = 'wiz.wsgi.application'
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'mysql.connector.django',
-        'NAME': 'cs4501',
-        'USER': 'www',
-        'PASSWORD': '$3cureUS'
-        'HOST': 'db',
-    }
+  'default': {
+      'ENGINE': 'mysql.connector.django',
+      'NAME': 'cs4501',
+      'USER': 'www',
+      'PASSWORD': '$3cureUS',
+      'HOST': 'db',
+      }
 }
 
 
@@ -103,3 +103,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")#for static hello world

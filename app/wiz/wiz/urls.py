@@ -14,7 +14,12 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from . import home
+
+from django.conf.urls.static import static #for static hello world
+from django.conf import settings #for static hello world
 
 urlpatterns = [
+    url(r'^$', home.index, name='index'), #for static hello world
     url(r'^admin/', include(admin.site.urls)),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) #for static hello world
