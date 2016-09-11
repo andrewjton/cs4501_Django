@@ -15,3 +15,5 @@ def index(request):
 </html>
 """
 	return HttpResponse(httpcode)
+
+    

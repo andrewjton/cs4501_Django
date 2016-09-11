@@ -22,4 +22,5 @@ from django.conf import settings #for static hello world
 urlpatterns = [
     url(r'^$', home.index, name='index'), #for static hello world
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^homepage/', include('homepage.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) #for static hello world
