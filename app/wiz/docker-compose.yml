@@ -8,6 +8,3 @@ models:
     ports:
       - "8001:8000"
     command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py loaddata db.json && mod_wsgi-express start-server --reload-on-changes wiz/wsgi.py --url-alias ./mysite/static /static/admin" 
-    
-
-

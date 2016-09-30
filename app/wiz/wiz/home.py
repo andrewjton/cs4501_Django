@@ -9,8 +9,8 @@ def index(request):
         <title>1st Django Project</title>
     </head>
     <body>
-            <h1 style="text-align: center; color: red; font-size: 72px;">Hello World!</h1>
-            <img src="http://andrewton.net/content/profPic.png" alt="andrew ton. for blind people">
+            <h1 style="text-align: center; color: red; font-size: 72px;">CS 4501</h1>
+            <p>Group 3: Andrew Ton, Brandon Peck, Michelle Wang</p>
     </body>
 </html>
 """
