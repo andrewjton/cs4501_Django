@@ -5,7 +5,7 @@ models:
     ports:
         - "8001:8000"
     volumes:
-        - /Users/mdubz/cs4501/entity:/app
+        - ~/cs4501/entity:/app
     command: "mod_wsgi-express start-server --reload-on-changes wiz/wsgi.py && python manage.py makemigrations && python manage.py migrate && python manage.py loaddata db.json && mod_wsgi-express start-server --reload-on-changes wiz/wsgi.py --url-alias ./mysite/static /static/admin" 
 
 exp:
@@ -15,7 +15,7 @@ exp:
     ports:
         - "8002:8000"
     volumes:
-        - /Users/mdubz/cs4501/experience:/app
+        - ~/cs4501/experience:/app
     command: "mod_wsgi-express start-server --reload-on-changes experience/wsgi.py"
 
 web:
@@ -25,6 +25,6 @@ web:
     ports:
         - "8000:8000"
     volumes:
-        - /Users/mdubz/cs4501/frontend:/app
+        - ~/cs4501/frontend:/app
     command: "mod_wsgi-express start-server --reload-on-changes frontend/wsgi.py"
 

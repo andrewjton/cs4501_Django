@@ -31,7 +31,6 @@ from django import db
 def index(request):
     return HttpResponse("You made it to the home page!")
 
-#1 createUser
 def createUser(request): 
     if request.method != 'POST':
         return _error_response(request, "must make POST request")
@@ -52,45 +51,41 @@ def createUser(request):
 
     return _success_response(request, {'user_id': u.pk})
 
-#2 createJob
 def createJob(request):
     if request.method != 'POST':
-        return _error_response(request, "must make a POST request")
+        return _error_response(request, "must make POST request")
     if 'name' not in request.POST or 'description' not in request.POST or 'price' not in request.POST or 'location' not in request.POST or 'owner' not in request.POST:
         return _error_response(request, "missing required fields")
-    
-    j = Job(name=request.POST['name'],
+    try:
+        j = Job(name=request.POST['name'],
             description=request.POST['description'],
             price=request.POST['price'],
             location=request.POST['location'],
             owner= User.objects.get(username = request.POST['owner']),
             taken=False)
-    try:
+
         j.save()
-    except db.Error:
-        return _error_response(request, "db error")
+    except:
+        return _error_response(request, "DB creation error")
     
     return _success_response(request, {'job_id': j.pk})
 
-#3 getAllUsers
 def getAllUsers(request):
     if request.method!='GET':
-        return _error_response(request, "must make a GET request")
+        return _error_response(request, "must make GET request")
 
     data = User.objects.all()
     data = list(map(model_to_dict, data))
 
     return _success_response(request, data)
 
-#4 getAllJobs
 def getAllJobs(request):
     if request.method != 'GET':
-        return _error_response(request, "must make a GET request")
+        return _error_response(request, "must make GET request")
     data = Job.objects.all()
     data = list(map(model_to_dict, data))
     return _success_response(request, data)
 
-#getUser
 def getUser(request, user_id):
     if request.method != 'GET':
         return _error_response(request, "must make GET request")
@@ -107,7 +102,6 @@ def getUser(request, user_id):
                                        'date_created': u.date_created 
                                        })
 
-#getJob
 def getJob(request, job_id):
     if request.method != 'GET':
         return _error_response(request, "must make GET request")
@@ -115,7 +109,7 @@ def getJob(request, job_id):
     try:
         j = Job.objects.get(pk=job_id)
     except Job.DoesNotExist:
-        return _error_response(request, "user not found")
+        return _error_response(request, "job not found")
 
     return _success_response(request, {'name': j.name,      
                                        'description': j.description,          
@@ -129,7 +123,7 @@ def getJob(request, job_id):
 
 #error_response
 def _error_response(request, error_msg):
-    return JsonResponse({'ok': False, 'error': error_msg})
+    return JsonResponse({'ok': False, 'resp': error_msg})
 
 #success_response
 def _success_response(request, resp=None):
