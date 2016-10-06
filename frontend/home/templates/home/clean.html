@@ -1,6 +1,8 @@
 {% extends 'home/base.html' %}
 {% block title %} Clean {% endblock %}
 	            {% block body_block %}
-				view the cleaners here 
+				{% for key, value in allJobs.items %}
+				{{value}}</br>
+				{ % endfor %}
 
 {% endblock %}

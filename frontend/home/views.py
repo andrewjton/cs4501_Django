@@ -8,4 +8,6 @@ def about(request):
     return render(request, 'home/about.html', {})
 
 def clean(request):
-    return render(request, 'home/clean.html', {})
+	job = requests.get('http://experience:8000/api/job/all')
+	deserial = json.loads(job.text)
+    return render(request, 'home/clean.html', {'allJobs': deserial})
