@@ -1,7 +1,8 @@
 led / optimized / DLL files
 __pycache__/
 *.py[cod]
-
+#our added files
+/db
 # C extensions
 *.so
 /homepage/migrations
