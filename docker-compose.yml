@@ -5,8 +5,8 @@ models:
     ports:
         - "8001:8000"
     volumes:
-        - /Users/brandonpeck/cs4501/entity:/app
-    command: "mod_wsgi-express start-server --reload-on-changes stuff-models/wsgi.py && python manage.py makemigrations && python manage.py migrate && python manage.py loaddata db.json && mod_wsgi-express start-server --reload-on-changes wiz/wsgi.py --url-alias ./mysite/static /static/admin" 
+        - /Users/mdubz/cs4501/entity:/app
+    command: "mod_wsgi-express start-server --reload-on-changes wiz/wsgi.py && python manage.py makemigrations && python manage.py migrate && python manage.py loaddata db.json && mod_wsgi-express start-server --reload-on-changes wiz/wsgi.py --url-alias ./mysite/static /static/admin" 
 
 exp:
     image: tp33/django
@@ -15,8 +15,8 @@ exp:
     ports:
         - "8002:8000"
     volumes:
-        - /Users/brandonpeck/cs4501/experience:/app
-    command: "mod_wsgi-express start-server --reload-on-changes stuff-exp/wsgi.py"
+        - /Users/mdubz/cs4501/experience:/app
+    command: "mod_wsgi-express start-server --reload-on-changes experience/wsgi.py"
 
 web:
     image: tp33/django
@@ -25,6 +25,6 @@ web:
     ports:
         - "8000:8000"
     volumes:
-        - /Users/brandonpeck/cs4501/frontend:/app
-    command: "mod_wsgi-express start-server --reload-on-changes stuff-web/wsgi.py"
+        - /Users/mdubz/cs4501/frontend:/app
+    command: "mod_wsgi-express start-server --reload-on-changes frontend/wsgi.py"
 
