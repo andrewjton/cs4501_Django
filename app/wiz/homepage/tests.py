@@ -8,7 +8,7 @@ import views
 
 
 #TODO: need separate classes for each model?
-class ModelsTest(TestCase):
+class ModelTests(TestCase):
     def setUp(self):
         pass
     def runTest(self):
@@ -190,7 +190,7 @@ class TestJobAPI(TestCase):
     def runTest(self):
         self.create_job()
         self.get_job()
-        self.update_job()
+        self.update_job(1)
         self.get_all_jobs()
     def tearDown(self):
         pass
