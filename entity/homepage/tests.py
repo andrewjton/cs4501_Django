@@ -25,6 +25,9 @@ class ModelTests(TestCase):
         pass
     
 
+
+
+
 class UserAPITest(TestCase):
     def setUp(self):
         self.c = Client()
@@ -75,34 +78,42 @@ class UserAPITest(TestCase):
         
     def update_user(self, user_id):
         #must make POST request
-        response = self.c.get('homepage/api/user/update/'+user_id+"/")
+        response = self.c.get('homepage/api/user/u/')
         self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "must make POST request")
         
         #user not found
-        response = self.c.post('homepage/api/user/update/nonexistent_user/')
+        response = self.c.post('homepage/api/user/u/', {"user_id" : 1000000})
         self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "user not found")
         
         #no fields updated
-        response = self.c.post('hompage/api/user/update/'+user_id+'/', {})
+        response = self.c.post('hompage/api/user/u/', {"user_id" : user_id})
         self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], 'no fields updated')
         
         #success
-        response = self.c.post('homepage/api/user/update/'+user_id+'/', {'first_name' : 'New First Name'})
+        response = self.c.post('homepage/api/user/u/', {'user_id' : user_id, 'first_name' : 'New First Name'})
         self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], 'True')
+    
+    def delete_user(self, user_id):
+        #must make POST request
+        response = self.c.get('/homepage/api/user/d/')
+        self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "must make POST request")
+        
+        #invalid request parameters
+        response = self.c.post('/homepage/api/user/d/', {'user_id' : 10000})
+        self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "invalid request parameters")
+
+        #success
+        response = self.c.post('/homepage/api/user/d/', {'user_id' : user_id})
+        self.assertEqual(response['ok'], True)
         
     def runTest(self):
         self.create_user()
         self.get_user(1)
         self.get_all_users()
-        #self.update_user(1) #1 is dummy user
-        
+        self.update_user(1) 
+        self.delete_user(1)
     def tearDown(self):
         pass
-
-
-
-
-
 
 
 
@@ -157,20 +168,20 @@ class TestJobAPI(TestCase):
         
     def update_job(self, job_id):
         #must make POST request
-        response = self.c.get('homepage/api/job/update/'+job_id+"/")
+        response = self.c.get('homepage/api/job/u/')
         self.assertEqual(response['resp'], "must make POST request")
         
         #job not found
-        response = self.c.post('homepage/api/job/update/nonexistent_job/')
+        response = self.c.post('homepage/api/job/u/', {'job_id' : job_id})
         self.assertEqual(response['resp'], "job not found")
         
         #no fields updated
-        response = self.c.post('hompage/api/job/update/'+job_id+'/', {})
+        response = self.c.post('hompage/api/job/u/', {'job_id' : job_id})
         self.assertEqual(response['resp'], 'no fields updated')
         
         #success
-        response = self.c.post('homepage/api/user/update/'+job_id+'/', {'description' : 'New Description'})
-        self.assertEqual(response['ok'], 'True')
+        response = self.c.post('homepage/api/user/u/', {'job_id' : job_id, 'description' : 'New Description'})
+        self.assertEqual(response['ok'], True)
         
     def get_all_jobs(self):
         #must make GET request
@@ -182,12 +193,25 @@ class TestJobAPI(TestCase):
         #success
         response = self.c.get('/homepage/api/job/all/')
         self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)
-    
+    def delete_job(self, job_id):
+        #must make POST request
+        response = self.c.get('/homepage/api/job/d/')
+        self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "must make POST request")
+        
+        #invalid request parameters
+        response = self.c.post('/homepage/api/job/d/', {'job_id' : 10000})
+        self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "invalid request parameters")
+
+        #success
+        response = self.c.post('/homepage/api/job/d/', {'job_id' : job_id})
+        self.assertEqual(response['ok'], True)
+        
     def runTest(self):
         self.create_job()
         self.get_job(1)
-        #self.update_job(1)
+        self.update_job(1)
         self.get_all_jobs()
+        self.delete_job(1)
     def tearDown(self):
         pass
 

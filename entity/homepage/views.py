@@ -13,48 +13,102 @@ from django import db
 # Create your views here.
 
 ### API ###
-#1 createUser
-#2 createJob
-#3 getAllUsers
-#4 getAllJobs
-#5 getUser
-#6 getJob
-#updateUser
-#updateJob
-#deleteUser
-#deleteJob
-#take job
+# createUser()
+# updateUser()
+# getUser(user_id)
+# getAllUsers()
+# deleteUser()
+# createJob()
+# updateJob()
+# getJob(job_id)
+# getAllJobs(job_id)
+# deleteJob()
 
 #error response
 #success response
 
 def index(request):
-    return HttpResponse("You made it to the home page!")
+    return HttpResponse("You made it to the api!")
 
-def createUser(request): 
+def createUser(request):
     if request.method != 'POST':
         return _error_response(request, "must make POST request")
-    if 'first_name' not in request.POST or 'last_name' not in request.POST or'dob' not in request.POST or 'username' not in request.POST:
+    if 'username' not in request.POST or \
+        'first_name' not in request.POST or \
+        'last_name' not in request.POST or \
+        'dob' not in request.POST:
         return _error_response(request, "missing required fields")
-
-    u = User(username=request.POST['username'],                         
-                    first_name=request.POST['first_name'],                            
-                    last_name=request.POST['last_name'],                             
-                    dob=request.POST['dob'],  
-                    date_created=datetime.datetime.now()                        
-                    )
-
     try:
-        u.save()
-    except db.Error:
-        return _error_response(request, "db error")
+        user = User.objects.create(username = request.POST["username"], first_name = request.POST["first_name"], 
+                               last_name = request.POST["last_name"], dob = request.POST["dob"],
+                               date_created = datetime.datetime.now())
+        user.save()
+    except:
+        return _error_response(request, "DB creation error")
+    return _success_response(request, {'userid': user.pk})
 
-    return _success_response(request, {'user_id': u.pk})
+def updateUser(request):
+    if request.method != 'POST':
+        return _error_response(request, "must make POST request")
+    try:
+        user = User.objects.get(pk=request.POST['user_id'])
+    except models.User.DoesNotExist:
+        return _error_response(request, "user not found")
+    changed = False
+    if 'first_name' in request.POST:
+        user.first_name = request.POST['first_name']
+        changed = True
+    if 'last_name' in request.POST:
+        user.last_name = request.POST['last_name']
+        changed = True
+    if 'dob' in request.POST:
+        user.dob = request.POST['dob']
+        changed = True
+    if not changed:
+        return _error_response(request, "no fields updated")
+    user.save()
+    return _success_response(request)
+
+def getUser(request, user_id):
+    if request.method != 'GET':
+        return _error_response(request, "must make GET request")
+    try:
+        u = User.objects.get(pk=user_id)
+    except:
+        return _error_response(request, "user not found")
+    return _success_response(request, {'username': u.username,      
+                                       'first_name': u.first_name,          
+                                       'last_name': u.last_name,          
+                                       'dob': u.dob,    
+                                       'date_created': u.date_created 
+                                       })
+
+def getAllUsers(request):
+    if request.method!='GET':
+        return _error_response(request, "must make GET request")
+    data = User.objects.all()
+    data = list(map(model_to_dict, data))
+    return _success_response(request, data)
+
+def deleteUser(request):
+    if request.method != 'POST':
+        return _error_response(request, "must make POST request")
+    try:
+        User.objects.get(pk=int(request.POST['user_id'])).delete()
+    except:
+        return _error_response(request, "could not delete user")
+    return _success_response(request)
+
+
 
 def createJob(request):
     if request.method != 'POST':
         return _error_response(request, "must make POST request")
-    if 'name' not in request.POST or 'description' not in request.POST or 'price' not in request.POST or 'location' not in request.POST or 'owner' not in request.POST:
+    if 'name' not in request.POST or \
+        'description' not in request.POST or \
+        'price' not in request.POST or \
+        'location' not in request.POST or \
+        'owner' not in request.POST:
         return _error_response(request, "missing required fields")
     try:
         j = Job(name=request.POST['name'],
@@ -63,21 +117,57 @@ def createJob(request):
             location=request.POST['location'],
             owner= User.objects.get(username = request.POST['owner']),
             taken=False)
-
         j.save()
     except:
         return _error_response(request, "DB creation error")
     
     return _success_response(request, {'job_id': j.pk})
 
-def getAllUsers(request):
-    if request.method!='GET':
+def updateJob(request):
+    if request.method != 'POST':
+        return _error_response(request, "must make POST Request")
+    try:
+        job = Job.objects.get(pk=request.POST['job_id'])
+    except:
+        return _error_response(request, "job not found")
+    changed = False
+    try:
+        if 'description' in request.POST:
+            job.description = request.POST['description']
+            changed = True
+        if 'price' in request.POST:
+            job.price = request.POST['price']
+            changed = True
+        if 'location' in request.POST:
+            job.location = request.POST['location']
+            changed = True
+        if 'taken' in request.POST:
+            job.taken = request.POST['taken']
+            changed = True
+    except:
+        _error_response(request, 'invalid field value')
+    if not changed:
+        return _error_response(request, "no fields updated")
+    job.save()
+    return _success_response(request)
+
+def getJob(request, job_id):
+    if request.method != 'GET':
         return _error_response(request, "must make GET request")
-
-    data = User.objects.all()
-    data = list(map(model_to_dict, data))
-
-    return _success_response(request, data)
+    try:
+        j = Job.objects.get(pk=job_id)
+    except:
+        return _error_response(request, "job not found")
+    try:
+        owner = User.objects.filter(username=j.owner).first().username
+    except:
+        return _error_response(request, "owner not found")
+    return _success_response(request, {'name': j.name,      
+                                       'description': j.description,          
+                                       'owner': owner,         
+                                       'price': j.price,    
+                                       'location': j.location
+                                       })
 
 def getAllJobs(request):
     if request.method != 'GET':
@@ -86,66 +176,21 @@ def getAllJobs(request):
     data = list(map(model_to_dict, data))
     return _success_response(request, data)
 
-def getUser(request, user_id):
-    if request.method != 'GET':
-        return _error_response(request, "must make GET request")
-
+def deleteJob(request):
+    if request.method != 'POST':
+        return _error_response(request, "must make POST request")
     try:
-        u = User.objects.get(pk=user_id)
-    except User.DoesNotExist:
-        return _error_response(request, "user not found")
+        Job.objects.get(pk=int(request.POST['job_id'])).delete()
+    except:
+        return _error_response(request, "invalid job_id")
+    return _success_response(request)
 
-    return _success_response(request, {'username': u.username,      
-                                       'first_name': u.first_name,          
-                                       'last_name': u.last_name,          
-                                       'dob': u.dob,    
-                                       'date_created': u.date_created 
-                                       })
-
-def getJob(request, job_id):
-    if request.method != 'GET':
-        return _error_response(request, "must make GET request")
-
-    try:
-        j = Job.objects.get(pk=job_id)
-    except Job.DoesNotExist:
-        return _error_response(request, "job not found")
-
-    return _success_response(request, {'name': j.name,      
-                                       'description': j.description,          
-                                       'owner': (User.objects.filter(username=j.owner)).first().username,          
-                                       'price': j.price,    
-                                       'location': j.location
-                                       })
-
-
-
-
-#error_response
 def _error_response(request, error_msg):
     return JsonResponse({'ok': False, 'resp': error_msg})
 
-#success_response
 def _success_response(request, resp=None):
     if resp:
         return JsonResponse({'ok': True, 'resp': resp})
     else:
         return JsonResponse({'ok': True})
 
-
-
-
-
-
-
-
-#update job
-#update user
-#delete user
-def deleteUser(request, user_id):
-    User.objects.get(pk=user_id).delete()
-    return HttpResponse(user_id);
-#delete job
-def deleteJob(request, user_id):
-    Job.objects.get(pk=user_id).delete()
-    return HttpResponse(user_id);
