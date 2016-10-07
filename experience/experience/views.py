@@ -6,10 +6,8 @@ import json
 import requests
 
 def getAllJobs(request):
-    
-    all_jobs = requests.get('http://entity:8000/api/job/all')
-    deserial_jobs = json.loads(all_jobs.text)
-    for job in deserial_job:
-            curr_id = int(job['pk'])
-            info[curr_id] = str(job['fields']['name'])
-    return JsonResponse(info, content_type='application/json')
+    #return HttpResponse("hi")
+    all_jobs = requests.get('http://models-api:8000/homepage/api/job/all')
+    jobs_list = json.loads(all_jobs.content.decode('utf8'))['resp']
+    return JsonResponse({'resp': jobs_list})     
+
