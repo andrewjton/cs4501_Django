@@ -185,6 +185,26 @@ def deleteJob(request):
         return _error_response(request, "invalid job_id")
     return _success_response(request)
 
+
+def availableJobs(request):
+    if request.method != 'GET':
+        return _error_response(request, "must make GET request")
+
+    try:
+        ts = _available_jobs()
+    except db.Error:
+        return _error_response(request, "db error")
+
+    return _success_response(request, {'recent_things': ts})
+
+def _available_jobs():
+    ts = Job.objects.filter(taken=False)
+    ts = list(map(model_to_dict, ts))
+    return ts
+
+
+
+
 def _error_response(request, error_msg):
     return JsonResponse({'ok': False, 'resp': error_msg})
 

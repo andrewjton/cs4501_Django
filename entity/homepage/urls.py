@@ -14,5 +14,5 @@ urlpatterns = [
     url(r'^job/(?P<job_id>[0-9]+)/$', views.getJob, name='getJob'),
     url(r'^job/all/$', views.getAllJobs, name='getAllJobs'),
     url(r'^job/d/$', views.deleteJob, name='deleteJob'),
-
+    url(r'^job/available/$', views.availableJobs, name='availableJobs')
 ]
