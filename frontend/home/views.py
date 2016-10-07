@@ -11,8 +11,5 @@ def about(request):
 
 def clean(request):
     response = requests.get('http://exp-api:8000/api/job/all')
-    dec = json.loads(response.content.decode('utf8'))
-    return HttpResponse(dec['resp'])
-
-    #job_list = json.loads(response.content.decode('utf8'))['resp']
-    return render(request, 'home/clean.html', {'allJobs': job_list[0]})
+    jsonJobsList = json.loads(response.content.decode())['resp']
+    return render(request, 'home/clean.html', {'allJobs': jsonJobsList})
