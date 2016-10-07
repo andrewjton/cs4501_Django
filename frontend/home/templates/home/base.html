@@ -11,12 +11,7 @@
     </head>
 	
 	 <body>
-	        <div>
-				<h1>{% block page_header %}{% endblock %}</h1>
-	            {% block body_block %}{% endblock %}
-				
-				
-	        </div>
+	       
 
 <nav class="navbar navbar-default">
   <div class="container-fluid">
@@ -34,9 +29,6 @@
       <ul class="nav navbar-nav">
 
 		
-   
-  
-			<li><a href="/clean/">Clean</a></li>
             <li><a href="/about/">About</a></li>
  
 		
@@ -62,6 +54,14 @@
     </div>
   </div>
 </nav>
+
+	        <div class="container">
+				<h1>{% block page_header %}{% endblock %}</h1>
+	            {% block body_block %}{% endblock %}
+				
+				
+	        </div>
+
 	      
 	    </body>
 	</html>
