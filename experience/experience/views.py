@@ -10,4 +10,3 @@ def getAllJobs(request):
     all_jobs = requests.get('http://models-api:8000/homepage/api/job/all')
     jobs_list = json.loads(all_jobs.content.decode('utf8'))['resp']
     return JsonResponse({'resp': jobs_list})     
-
