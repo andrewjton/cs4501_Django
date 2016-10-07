@@ -6,7 +6,7 @@ models:
         - "8001:8000"
     volumes:
         - ~/cs4501/entity:/app
-    command: "mod_wsgi-express start-server --reload-on-changes wiz/wsgi.py && python manage.py makemigrations && python manage.py migrate && python manage.py loaddata db.json && mod_wsgi-express start-server --reload-on-changes wiz/wsgi.py --url-alias ./mysite/static /static/admin" 
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py loaddata db.json && mod_wsgi-express start-server --reload-on-changes wiz/wsgi.py" 
 
 exp:
     image: tp33/django
