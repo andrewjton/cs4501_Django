@@ -7,42 +7,28 @@ import homepage.views
 from django.forms.models import model_to_dict
 
 
-#TODO: need separate classes for each model?
-# class ModelTests(TestCase):
-#     def setUp(self):
-#         pass
-#     def rtunTest(self):
-#          user = User(username='username',                         
-#                     first_name='first name',                            
-#                     last_name='last name',
-#                     date_created = timezone.now(),
-#                     dob= timezone.now())
-#          user.save()
-#          self.assertTrue(isinstance(user, User))
-#          job = Job(name='name',                         
-#                     description='description',                            
-#                     location='somewhere',                             
-#                     price= 5.0,  
-#                     taken = False,
-#                     owner = user) 
-#          job.save()
-#          self.assertTrue(isinstance(job, Job))
-#     def tearDown(self):
-#         pass
-#     
-
-
-
-
 class UserAPITest(TestCase):
     def setUp(self):
         User.objects.create(username='username',                         
                      first_name='first name',                            
                      last_name='last name',
                      date_created = timezone.now(),
-                     dob= timezone.now())
+                     dob= timezone.now(),
+                     id = 1)
+
+
+    def test_get_user(self, user_id=1):
         
+        #must make GET request
+        response = self.client.post('/api/user/'+str(user_id)+'/', {})
+        self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "must make GET request")
         
+        #user not found
+        response = self.client.get('/api/user/10000/')
+        self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "user not found")
+        #success
+        response = self.client.get('/api/user/'+str(user_id)+'/') 
+        self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)    
     
 
     def test_get_all_users(self):
@@ -53,7 +39,6 @@ class UserAPITest(TestCase):
         #success
         response = self.client.get('/api/user/all/')
         self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)
-        print(list(map(model_to_dict, User.objects.all())))
 
     def test_update_user(self, user_id=1):
         #must make POST request
@@ -102,25 +87,7 @@ class UserAPITest(TestCase):
                                                          'last_name' : 'last_name', \
                                                          'dob' : timezone.now()})
         self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)
-    def test_get_user(self, user_id=1):
-        #must make GET request
-        response = self.client.post('/api/user/'+str(user_id)+'/', {})
-        self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "must make GET request")
-        
-        #user not found
-        response = self.client.get('/api/user/10000/')
-        self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "user not found")
-        
-        #success
-        response = self.client.get('/api/user/'+str(user_id)+'/') 
-        self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True) 
-    def runTest(self):
-        #self.clientreate_user()
-        #self.get_user(3)
-        #self.get_all_users()
-        #self.update_user(3) 
-        #self.delete_user(3)
-        pass
+
     def tearDown(self):
         pass
 
@@ -131,10 +98,19 @@ class UserAPITest(TestCase):
 class TestJobAPI(TestCase):
     def setUp(self):
         User.objects.create(username='username',                         
-                     first_name='first name',                            
-                     last_name='last name',
-                     date_created = timezone.now(),
-                     dob= timezone.now())
+                      first_name='first name',                            
+                      last_name='last name',
+                      date_created = timezone.now(),
+                      dob= timezone.now(),
+                      id = 1)
+        
+        Job.objects.create(name='name',                         
+                     description='description',                            
+                     location='somewhere',                             
+                     price= 5.0,  
+                     taken = False,
+                     owner = User.objects.get(pk=1),
+                     id = 1) 
         
     def test_create_job(self):
         #TODO: check for 'ok' or resp value??
@@ -152,9 +128,9 @@ class TestJobAPI(TestCase):
         #DB creation error
         response = self.client.post('/api/job/n/', {'name' : 'job1', \
                                                          'location' : 'somewhere', \
-                                                         'description' : 'test job', \
-                                                         'price' : 5, \
-                                                         'owner' : self.owner}) # invalid price type 
+                                                         'description' : 6, \
+                                                         'price' : "5", \
+                                                         'owner' : ""})  
         self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "DB creation error")
         
         #successful creation
@@ -162,7 +138,7 @@ class TestJobAPI(TestCase):
                                                          'location' : 'somewhere', \
                                                          'description' : 'test job', \
                                                          'price' : 5.0, \
-                                                         'owner' : self.owner.id})
+                                                         'owner' : User.objects.get(pk=1)})
         self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True) 
 
     def test_get_job(self, job_id=1):
@@ -219,13 +195,7 @@ class TestJobAPI(TestCase):
         response = self.client.post('/api/job/d/', {'job_id' : job_id})
         self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)
         
-    def runTest(self):
-        #self.clientreate_job()
-        #self.get_job(2)
-        #self.update_job(2)
-        #self.get_all_jobs()
-        #self.delete_job(2)
-        pass
+
     def tearDown(self):
         pass
 
