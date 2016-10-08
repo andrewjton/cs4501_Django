@@ -1,11 +1,11 @@
 {% extends 'home/base.html' %}
-{% block title %} Job - {job.name} {% endblock %}
+{% block title %} Job - {{job.name}} {% endblock %}
 	            {% block body_block %}
 				<div class="container">
-					<h2> {{job.name}} Temp name </h2>
-					<h4> {{job.location}}Charlottesville, ${{job.price}}8 per hour </h4>
+					<h2> {{job.name}} </h2>
+					<h4> {{job.location}}, ${{job.price}} per hour</h4>
 					{{job.description}}
-					Example description
+			
 					
 <br><br><br>
 					<a href="/" class="btn btn-primary btn-lg">Return</a>

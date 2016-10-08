@@ -18,17 +18,12 @@
 				    </tr>
 				  </thead>
 				  <tbody>
-  				    <tr> 
-  				      <td><a href = "{% url 'job' 60 %}">test</a></td>
-  				      <td>test</td>
-  					  <td>test</td>
-  				    </tr>
-  				
+  			
 	  				{% for job in allJobs %}
 				    <tr> 
 				      <td><a href = "{% url 'job' job.id %}">{{job.name}}</a></td>
 				      <td>{{job.location}}</td>
-					  <td>{{job.price}}</td>
+					  <td>{{job.price}} per hour</td>
 				    </tr>
 					{% endfor %}
 				  </tbody>
