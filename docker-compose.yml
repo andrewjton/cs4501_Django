@@ -6,7 +6,7 @@ models:
         - "8001:8000"
     volumes:
         - ~/cs4501/entity:/app
-    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py loaddata db.json && mod_wsgi-express start-server --reload-on-changes wiz/wsgi.py" 
+    command: bash -c "pip install requests && python manage.py makemigrations && python manage.py migrate && python manage.py loaddata db.json && mod_wsgi-express start-server --reload-on-changes wiz/wsgi.py" 
 
 exp:
     image: tp33/django
@@ -16,7 +16,7 @@ exp:
         - "8002:8000"
     volumes:
         - ~/cs4501/experience:/app
-    command: bash -c "mod_wsgi-express start-server --reload-on-changes experience/wsgi.py"
+    command: bash -c "pip install requests && mod_wsgi-express start-server --reload-on-changes experience/wsgi.py"
 
 web:
     image: tp33/django
@@ -26,5 +26,5 @@ web:
         - "8000:8000"
     volumes:
         - ~/cs4501/frontend:/app
-    command: bash -c "mod_wsgi-express start-server --reload-on-changes frontend/wsgi.py"
+    command: bash -c "pip install requests && mod_wsgi-express start-server --reload-on-changes frontend/wsgi.py"
 
