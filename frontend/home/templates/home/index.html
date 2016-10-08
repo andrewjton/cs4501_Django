@@ -23,7 +23,7 @@
 				    <tr> 
 				      <td><a href = "{% url 'job' job.id %}">{{job.name}}</a></td>
 				      <td>{{job.location}}</td>
-					  <td>{{job.price}} per hour</td>
+					  <td>${{job.price}} per hour</td>
 				    </tr>
 					{% endfor %}
 				  </tbody>
