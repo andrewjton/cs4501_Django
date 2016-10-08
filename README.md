@@ -1,8 +1,9 @@
 ## Project 3 User Stories
-5. As a job-seeking client, I would like to find a job close to me from a list. [def get_all_jobs()]
+5. As a job-seeking client, I would like to find a job close to me from a list by seeing their locations. [def get_all_jobs()]
 6. As a job-seeking client, I'd like to get a list of more details about a job. [def getJob()]
 7. As a dirty-house owner, I would like to get the pricing of all the jobs around me so I can know how to price my job competitively. [def get_all_jobs()]
-
+8. As a job-seeking client, I want to know who my other competitors are. [def get_all_jobs()]
+9. As a dirty-house owner, I want to compare all prices of all available jobs easily by seeing all the prices at once. [def get_all_jobs()]
 
 1. As a job-seeking client, I would like to create an account. [def create_user()]
 2. As a job-seeking client, I would like to update my existing account details because I found an error. [def update-user()]
