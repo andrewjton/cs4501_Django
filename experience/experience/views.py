@@ -6,7 +6,12 @@ import json
 import requests
 
 def getAllJobs(request):
-    #return HttpResponse("hi")
-    all_jobs = requests.get('http://models-api:8000/homepage/api/job/all')
-    jobs_list = json.loads(all_jobs.content.decode('utf8'))['resp']
+    all_jobs = requests.get('http://models-api:8000/api/job/all')
+    jobs_list = all_jobs
+    jobs_list = jobs_list.json()['resp']
     return JsonResponse({'resp': jobs_list})     
+    
+def getJob(request, jobID):
+    response = requests.get('http://models-api:8000/api/job/' + str(jobID) + '/')
+    job = response.json()['resp']
+    return JsonResponse({'resp': job})     

@@ -8,4 +8,5 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
       url(r'^api/job/all/$', views.getAllJobs, name='getAllJobs'),
+      url(r'^api/job/(?P<jobID>\d+)/$', views.getJob, name='getJob'),
 )

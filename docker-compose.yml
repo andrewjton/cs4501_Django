@@ -16,7 +16,7 @@ exp:
         - "8002:8000"
     volumes:
         - ./experience:/app
-    command: bash -c "mod_wsgi-express start-server --reload-on-changes experience/wsgi.py"
+    command: bash -c "pip install requests && mod_wsgi-express start-server --reload-on-changes experience/wsgi.py"
 
 web:
     image: tp33/django
@@ -26,5 +26,5 @@ web:
         - "8000:8000"
     volumes:
         - ./frontend:/app
-    command: bash -c "mod_wsgi-express start-server --reload-on-changes frontend/wsgi.py"
+    command: bash -c "pip install requests && mod_wsgi-express start-server --reload-on-changes frontend/wsgi.py"
 
