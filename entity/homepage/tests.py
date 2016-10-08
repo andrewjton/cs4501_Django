@@ -1,218 +1,231 @@
 from django.test import TestCase, Client
 from django.core.urlresolvers import reverse
 from homepage.models import User, Job
-import datetime, json
+import json
+from django.utils import timezone
 import homepage.views
+from django.forms.models import model_to_dict
 
 
 #TODO: need separate classes for each model?
-class ModelTests(TestCase):
-    def setUp(self):
-        pass
-    def runTest(self):
-         user = User(username='username',                         
-                    first_name='first name',                            
-                    last_name='last name',                             
-                    dob= datetime.datetime.now())
-         user.save()
-         self.assertTrue(isinstance(user, User))
-         job = Job(name='name',                         
-                    description='description',                            
-                    location='somewhere',                             
-                    price= 5.0,  
-                    taken = False) #no owner 
-         self.assertTrue(isinstance(job, Job))
-    def tearDown(self):
-        pass
-    
+# class ModelTests(TestCase):
+#     def setUp(self):
+#         pass
+#     def rtunTest(self):
+#          user = User(username='username',                         
+#                     first_name='first name',                            
+#                     last_name='last name',
+#                     date_created = timezone.now(),
+#                     dob= timezone.now())
+#          user.save()
+#          self.assertTrue(isinstance(user, User))
+#          job = Job(name='name',                         
+#                     description='description',                            
+#                     location='somewhere',                             
+#                     price= 5.0,  
+#                     taken = False,
+#                     owner = user) 
+#          job.save()
+#          self.assertTrue(isinstance(job, Job))
+#     def tearDown(self):
+#         pass
+#     
 
 
 
 
 class UserAPITest(TestCase):
     def setUp(self):
-        self.c = Client()
-    def create_user(self):
-        #TODO: check for 'ok' or resp value??
+        User.objects.create(username='username',                         
+                     first_name='first name',                            
+                     last_name='last name',
+                     date_created = timezone.now(),
+                     dob= timezone.now())
         
+        
+    
+
+    def test_get_all_users(self):
+        #must make GET request
+        response = self.client.post('/api/user/all/', {})
+        self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "must make GET request")
+        
+        #success
+        response = self.client.get('/api/user/all/')
+        self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)
+        print(list(map(model_to_dict, User.objects.all())))
+
+    def test_update_user(self, user_id=1):
         #must make POST request
-        response = self.c.get('/api/user/n/')
+        response = self.client.get('/api/user/u/')
+        self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "must make POST request")
+        
+        #user not found
+        response = self.client.post('/api/user/u/', {"user_id" : 1000000})
+        self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "user not found")
+        
+        #no fields updated
+        response = self.client.post('/api/user/u/', {"user_id" : user_id})
+        self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], 'no fields updated')
+        
+        #success
+        response = self.client.post('/api/user/u/', {'user_id' : user_id, 'first_name' : 'New First Name'})
+        self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)
+    
+    def test_delete_user(self, user_id=1):
+        #must make POST request
+        response = self.client.get('/api/user/d/')
+        self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "must make POST request")
+        
+        #invalid request parameters
+        response = self.client.post('/api/user/d/', {'user_id' : 10000})
+        self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "invalid request parameters")
+
+        #success
+        response = self.client.post('/api/user/d/', {'user_id' : user_id})
+        self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)
+    def test_create_user(self):
+        #must make POST request
+        response = self.client.get('/api/user/n/')
         self.assertEqual(json.loads(response.content.decode('utf8'))['resp'] , "must make POST request")
         
         # missing required fields
-        response = self.c.post('/api/user/n/', {'username' : 'user1', \
+        response = self.client.post('/api/user/n/', {'username' : 'user1', \
                                                          'first_name' : 'first_name', \
-                                                         'dob' : datetime.datetime.now()})
+                                                         'dob' : timezone.now()})
         
         self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "missing required fields")
          
         #successful creation
-        response = self.c.post('/api/user/n/', {'username' : 'user1', \
+        response = self.client.post('/api/user/n/', {'username' : 'user1', \
                                                          'first_name' : 'first_name', \
                                                          'last_name' : 'last_name', \
-                                                         'dob' : datetime.datetime.now()})
-        self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True) 
-
-    def get_user(self, user_id):
-        #must make GET request
-        response = self.c.post('/api/user/'+str(user_id)+'/', {})
-        self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "must make GET request")
-        
-        #user not found
-        response = self.c.get('/api/user/10000/')
-        self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "user not found")
-        
-        #success
-        response = self.c.get('/api/user/'+str(user_id)+'/') 
-        self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True) #will be false with db empty
-       
-    def get_all_users(self):
-        #must make GET request
-        response = self.c.post('/api/user/all/', {})
-        self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "must make GET request")
-        
-        #What condition would this fail under? No db?
-        
-        #success
-        response = self.c.get('/api/user/all/')
+                                                         'dob' : timezone.now()})
         self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)
-        
-    def update_user(self, user_id):
-        #must make POST request
-        response = self.c.get('/api/user/u/')
-        self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "must make POST request")
+    def test_get_user(self, user_id=1):
+        #must make GET request
+        response = self.client.post('/api/user/'+str(user_id)+'/', {})
+        self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "must make GET request")
         
         #user not found
-        response = self.c.post('/api/user/u/', {"user_id" : 1000000})
+        response = self.client.get('/api/user/10000/')
         self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "user not found")
         
-        #no fields updated
-        response = self.c.post('/api/user/u/', {"user_id" : user_id})
-        self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], 'no fields updated')
-        
         #success
-        response = self.c.post('/api/user/u/', {'user_id' : user_id, 'first_name' : 'New First Name'})
-        self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], 'True')
-    
-    def delete_user(self, user_id):
-        #must make POST request
-        response = self.c.get('/api/user/d/')
-        self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "must make POST request")
-        
-        #invalid request parameters
-        response = self.c.post('/api/user/d/', {'user_id' : 10000})
-        self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "invalid request parameters")
-
-        #success
-        response = self.c.post('/api/user/d/', {'user_id' : user_id})
-        self.assertEqual(response['ok'], True)
-        
+        response = self.client.get('/api/user/'+str(user_id)+'/') 
+        self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True) 
     def runTest(self):
-        self.create_user()
-        self.get_user(1)
-        self.get_all_users()
-        self.update_user(1) 
-        self.delete_user(1)
+        #self.clientreate_user()
+        #self.get_user(3)
+        #self.get_all_users()
+        #self.update_user(3) 
+        #self.delete_user(3)
+        pass
     def tearDown(self):
         pass
 
 
 
 
+
 class TestJobAPI(TestCase):
     def setUp(self):
-        self.c = Client()
-        self.owner = None
-        #self.owner =  User.objects.get(pk=1)
+        User.objects.create(username='username',                         
+                     first_name='first name',                            
+                     last_name='last name',
+                     date_created = timezone.now(),
+                     dob= timezone.now())
         
-    def create_job(self):
+    def test_create_job(self):
         #TODO: check for 'ok' or resp value??
         
         #must make POST request
-        response = self.c.get('/api/job/n/')
+        response = self.client.get('/api/job/n/')
         self.assertEqual(json.loads(response.content.decode('utf8'))['resp'] , "must make POST request")
         
         # missing required fields
-        response = self.c.post('/api/job/n/', {'name' : 'job1', \
+        response = self.client.post('/api/job/n/', {'name' : 'job1', \
                                                          'description' : 'test job', \
                                                          'location' : 'somewhere'})
         self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "missing required fields")
         
         #DB creation error
-        response = self.c.post('/api/job/n/', {'name' : 'job1', \
+        response = self.client.post('/api/job/n/', {'name' : 'job1', \
                                                          'location' : 'somewhere', \
                                                          'description' : 'test job', \
                                                          'price' : 5, \
-                                                         'owner' : None}) # invalid price type 
+                                                         'owner' : self.owner}) # invalid price type 
         self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "DB creation error")
         
         #successful creation
-        response = self.c.post('/api/user/n/', {'name' : 'job1', \
+        response = self.client.post('/api/job/n/', {'name' : 'job1', \
                                                          'location' : 'somewhere', \
                                                          'description' : 'test job', \
                                                          'price' : 5.0, \
-                                                         'owner' : self.owner})
-        #self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True) 
+                                                         'owner' : self.owner.id})
+        self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True) 
 
-    def get_job(self, job_id):
+    def test_get_job(self, job_id=1):
         #must make GET request
-        response = self.c.post('/api/job/'+str(job_id)+'/', {})
+        response = self.client.post('/api/job/'+str(job_id)+'/', {})
         self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "must make GET request")
         
         #job not found
-        response = self.c.get('/api/job/10000/')
+        response = self.client.get('/api/job/10000/')
         self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "job not found")
         
         #success provided db has the job
-        response = self.c.get('/api/job/'+str(job_id)+'/')
-        #self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)
+        response = self.client.get('/api/job/'+str(job_id)+'/')
+        self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)
         
-    def update_job(self, job_id):
+    def test_update_job(self, job_id=1):
         #must make POST request
-        response = self.c.get('/api/job/u/')
-        self.assertEqual(response['resp'], "must make POST request")
+        response = self.client.get('/api/job/u/')
+        self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "must make POST request")
         
         #job not found
-        response = self.c.post('/api/job/u/', {'job_id' : job_id})
-        self.assertEqual(response['resp'], "job not found")
+        response = self.client.post('/api/job/u/', {'job_id' : 1000})
+        self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "job not found")
         
         #no fields updated
-        response = self.c.post('/api/job/u/', {'job_id' : job_id})
-        self.assertEqual(response['resp'], 'no fields updated')
+        response = self.client.post('/api/job/u/', {'job_id' : job_id})
+        self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], 'no fields updated')
         
         #success
-        response = self.c.post('/api/user/u/', {'job_id' : job_id, 'description' : 'New Description'})
-        self.assertEqual(response['ok'], True)
+        response = self.client.post('/api/job/u/', {'job_id' : job_id, 'description' : 'New Description'})
+        self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)
         
-    def get_all_jobs(self):
+        
+    def test_get_all_jobs(self):
         #must make GET request
-        response = self.c.post('/api/job/all/', {})
+        response = self.client.post('/api/job/all/', {})
         self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "must make GET request")
         
         #What condition would this fail under? No db?
         
         #success
-        response = self.c.get('/api/job/all/')
+        response = self.client.get('/api/job/all/')
         self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)
-    def delete_job(self, job_id):
+    def test_delete_job(self, job_id=1):
         #must make POST request
-        response = self.c.get('/api/job/d/')
+        response = self.client.get('/api/job/d/')
         self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "must make POST request")
         
         #invalid request parameters
-        response = self.c.post('/api/job/d/', {'job_id' : 10000})
+        response = self.client.post('/api/job/d/', {'job_id' : 10000})
         self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "invalid request parameters")
 
         #success
-        response = self.c.post('/api/job/d/', {'job_id' : job_id})
-        self.assertEqual(response['ok'], True)
+        response = self.client.post('/api/job/d/', {'job_id' : job_id})
+        self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)
         
     def runTest(self):
-        self.create_job()
-        self.get_job(1)
-        self.update_job(1)
-        self.get_all_jobs()
-        self.delete_job(1)
+        #self.clientreate_job()
+        #self.get_job(2)
+        #self.update_job(2)
+        #self.get_all_jobs()
+        #self.delete_job(2)
+        pass
     def tearDown(self):
         pass
 
