@@ -9,5 +9,3 @@
 2. As a job-seeking client, I would like to update my existing account details because I found an error. [def update-user()]
 3. As a dirty-house owner, I would like to post a “job” so that others can view it. [def create_job()]
 4. As a dirty-house owner, I would like to update my existing jobs because I found errors in my initial description. [def update_job()]
-
-#read-only 
