@@ -4,7 +4,7 @@ from django.http import Http404
 from django.http import JsonResponse
 from django.core import serializers #for json files
 from django.forms.models import model_to_dict
-import datetime
+from django.utils import timezone
 import json
 
 from .models import Job, User
@@ -41,7 +41,7 @@ def createUser(request):
     try:
         user = User.objects.create(username = request.POST["username"], first_name = request.POST["first_name"], 
                                last_name = request.POST["last_name"], dob = request.POST["dob"],
-                               date_created = datetime.datetime.now())
+                               date_created = timezone.now())
         user.save()
     except:
         return _error_response(request, "DB creation error")
@@ -52,7 +52,7 @@ def updateUser(request):
         return _error_response(request, "must make POST request")
     try:
         user = User.objects.get(pk=request.POST['user_id'])
-    except models.User.DoesNotExist:
+    except:
         return _error_response(request, "user not found")
     changed = False
     if 'first_name' in request.POST:
@@ -96,7 +96,7 @@ def deleteUser(request):
     try:
         User.objects.get(pk=int(request.POST['user_id'])).delete()
     except:
-        return _error_response(request, "could not delete user")
+        return _error_response(request, "invalid request parameters")
     return _success_response(request)
 
 
@@ -125,7 +125,7 @@ def createJob(request):
 
 def updateJob(request):
     if request.method != 'POST':
-        return _error_response(request, "must make POST Request")
+        return _error_response(request, "must make POST request")
     try:
         job = Job.objects.get(pk=request.POST['job_id'])
     except:
@@ -182,7 +182,7 @@ def deleteJob(request):
     try:
         Job.objects.get(pk=int(request.POST['job_id'])).delete()
     except:
-        return _error_response(request, "invalid job_id")
+        return _error_response(request, "invalid request parameters")
     return _success_response(request)
 
 
