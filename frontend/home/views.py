@@ -13,6 +13,9 @@ def index(request):
 def about(request):
     return render(request, 'home/about.html', {})
 
+def register(request):
+    return render(request, 'home/register.html', {})
+
 def job(request, jobID):
     response = requests.get('http://exp-api:8000/api/v1/job/'+str(jobID)+"/")
     jsonJobsList = json.loads(response.content.decode("utf8"))['resp']    
