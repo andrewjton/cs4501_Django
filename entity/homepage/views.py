@@ -108,6 +108,7 @@ def createJob(request):
         'description' not in request.POST or \
         'price' not in request.POST or \
         'location' not in request.POST or \
+        'cleaner' not in request.POST or \
         'owner' not in request.POST:
         return _error_response(request, "missing required fields")
     try:
@@ -116,7 +117,7 @@ def createJob(request):
             price=request.POST['price'],
             location=request.POST['location'],
             owner= User.objects.get(username = request.POST['owner']),
-            cleaner_username = "",
+            cleaner=User.objects.get(username = request.POST['user']),
             date_created = timezone.now(),
             taken=False)
 
