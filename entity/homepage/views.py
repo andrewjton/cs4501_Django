@@ -7,7 +7,7 @@ from django.forms.models import model_to_dict
 from django.utils import timezone
 import json
 
-from .models import Job, User
+from .models import Job, User, Authenticator
 from django import db
 
 # Create your views here.
@@ -116,7 +116,10 @@ def createJob(request):
             price=request.POST['price'],
             location=request.POST['location'],
             owner= User.objects.get(username = request.POST['owner']),
+            cleaner_username = "",
+            date_created = timezone.now(),
             taken=False)
+
         j.save()
     except:
         return _error_response(request, "DB creation error")
@@ -202,8 +205,26 @@ def _available_jobs():
     ts = list(map(model_to_dict, ts))
     return ts
 
-
-
+# def createAuth(request, user_id):
+#     if request.method != 'GET':
+#         return _error_response(request, 'must make GET request')
+#     if(Authenticator.objects.filter(user_id=user_id).exists()): #if prexisting authenticator 
+#         auth_existing = serializers.serialize('json', Authenticator.objects.filter(user_id=user_id))
+#     #otherwise, create a new authenticator
+#     try: 
+#         auth_new = hmac.new(key= settings.SECRET_KEY.encode('utf-8'), msg = os.urandom(32), digestmod = 'sha256').hexdigest()
+#         date_created = timezone.now()
+#         auth = Authenticator.objects.create(authenticator=auth_new, user_id=user_id, date_created=date_created)
+#         result = serializers.serialize('json', Authenticator.objects.filter(user_id=user_id))
+#     except db.Error:
+#         return _error_response(request, "db error")
+#     return _success_response(request, result); 
+# 
+# def deleteAuth(request, user_id):
+#     return _error_response(request, "method unimplemented")
+# 
+# def createAuth(request, user_id):
+#     return _error_response(request, "method unimplemented")
 
 def _error_response(request, error_msg):
     return JsonResponse({'ok': False, 'resp': error_msg})
