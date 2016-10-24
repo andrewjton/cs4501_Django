@@ -81,7 +81,7 @@ def getUser(request, username):
     if request.method != 'GET':
         return _error_response(request, "must make GET request")
     try:
-        u = User.objects.get(pk=username)
+        u = User.objects.filter(username=username)
     except:
         return _error_response(request, "user not found")
     return _success_response(request, {'username': u.username,      
