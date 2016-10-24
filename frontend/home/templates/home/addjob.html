@@ -1,0 +1,18 @@
+{% extends 'home/base.html' %}
+{% block title %} Register {% endblock %}
+ {% block body_block %}
+ <h2>Register</h2>
+    {% if user.is_authenticated %}
+ <h1>New post</h1>
+    <form method="POST" class="job-form">{% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="save btn btn-default">Save</button>
+    </form>
+    
+    {% else %}
+
+    <p>You are not logged in.  Please <a href="/login/">log in</a> or <a href="/register/">register</a>.</p>
+    {% endif %}
+
+
+ {% endblock %}

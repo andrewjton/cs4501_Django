@@ -37,11 +37,12 @@
       </ul>
 	      <ul class="nav navbar-nav">
       {% if user.is_authenticated %}
-          <li><a href="/#/">Logout</a></li>
+          <li><a href="/logout/">Logout</a></li>
+		  <li><a href="/addjob/">Add Job</a></li>
 
       {% else %}
-          <li><a href="/register/">Register Here</a></li>
-          <li><a href="/#/">Login</a></li>
+          <li><a href="/register/">Register</a></li>
+          <li><a href="/login/">Login</a></li>
       {% endif %}
   </ul>
       <form class="navbar-form navbar-right" role="search">

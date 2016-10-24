@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.contrib.auth import logout
+#from .forms import JobForm
 import requests
 import json
 
@@ -15,6 +17,17 @@ def about(request):
 
 def register(request):
     return render(request, 'home/register.html', {})
+
+def login(request):
+    return render(request, 'home/login.html', {})
+
+def addjob(request):
+	#form = JobForm()
+	#return render(request, 'home/addjob.html', {'form': form})
+	return render(request, 'home/addjob.html', {})
+
+def logout_view(request):
+    logout(request)
 
 def job(request, jobID):
     response = requests.get('http://exp-api:8000/api/v1/job/'+str(jobID)+"/")
