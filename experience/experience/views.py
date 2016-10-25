@@ -18,8 +18,8 @@ def getJob(request, jobID):
 
 @csrf_exempt #need to remove later??
 def login(request):
-    username = request.POST.get('username', 'no_user')
-    posted_pass = request.POST.get('password', 'no_password')
+    username = request.POST.get('username', 'none')
+    posted_pass = request.POST.get('password', 'none')
     user = requests.get('http://models-api:8000/api/v1/user/'+username+'/').json()
     if user['ok'] == True:
         #check passwords
@@ -30,6 +30,22 @@ def login(request):
             return JsonResponse({'resp':auth_token})
     return JsonResponse({'resp': user_pass})
 
+@csrf_exempt
+def register(request):
+    username = request.POST.get('username', 'none')
+    password = request.POST.get('password', 'none')
+    first_name = request.POST.get('first_name', 'none')
+    last_name = request.POST.get('last_name', 'none')
+    dob = request.POST.get('dob', 'none')
+
+    user = requests.post('http://models-api:8000/api/v1/user/n/', data = {'username':username,
+                                                                         'password':password,
+                                                                         'first_name':first_name,
+                                                                         'last_name':last_name,
+                                                                         'dob':dob}).json()
+    return JsonResponse(user)
+
+    return JsonResponse(user, safe=False)
     
 def _error_response(request, error_msg):
     return JsonResponse({'ok': False, 'resp': error_msg})

@@ -9,6 +9,7 @@ from .forms import *
 from django.contrib.auth import hashers
 from django.contrib import messages
 from django.shortcuts import render_to_response
+from django.utils import timezone
 
 
 
@@ -34,9 +35,7 @@ def login(request):
     username = f.cleaned_data['username']
     password = f.cleaned_data['password']
     next = reverse('index')
-    response = requests.post('http://exp-api:8000/api/v1/login/', data={'username':username, 'password':password})
-    return HttpResponse(response)
-
+    response = requests.post('http://exp-api:8000/api/v1/login/', data={'username':username, 'password':password}).json()
     if not response['ok']:
         #error occurred
         return HttpResponse(response['resp'])
@@ -45,10 +44,29 @@ def login(request):
     response.set_cookie("auth", auth_token)
     return response
 
-
 def register(request):
-    return render(request, 'home/register.html', {})
+    if request.method =='GET':
+        register_form = RegisterForm()
+        return render(request, 'home/register.html', {'form': register_form})
+    f = RegisterForm(request.POST)
+    if not f.is_valid():
+        return HttpResponse("didnt fill in forms properly")
+    username = f.cleaned_data['username']
+    password = f.cleaned_data['password']
+    first_name = f.cleaned_data['first_name']
+    last_name = f.cleaned_data['last_name']
+    dob = f.cleaned_data['date_of_birth']
+    response = requests.post('http://exp-api:8000/api/v1/register/', data={'username':username,
+                                                                           'password':password,
+                                                                           'first_name':first_name,
+                                                                           'last_name':last_name,
+                                                                           'dob':dob}).json()
+    next = reverse('login')
+    if not response['ok']:
+        return HttpResponse("invalid signup message")
+    return HttpResponseRedirect(next)
 
+    
 def job(request, jobID):
     response = requests.get('http://exp-api:8000/api/v1/job/'+str(jobID)+"/")
     jsonJobsList = json.loads(response.content.decode("utf8"))['resp']    

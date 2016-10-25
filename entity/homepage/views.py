@@ -51,10 +51,9 @@ def createUser(request):
                                     last_name = request.POST["last_name"], \
                                     dob = request.POST["dob"], \
                                     date_created = timezone.now())
-        user.save()
     except:
         return _error_response(request, "DB creation error")
-    return _success_response(request, {'userid': user.pk})
+    return _success_response(request, {'username': user.username})
 
 def updateUser(request):
     if request.method != 'POST':
