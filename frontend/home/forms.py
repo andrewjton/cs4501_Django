@@ -1,9 +1,6 @@
 from django import forms
 
-from .models import Job
+class LoginForm(forms.Form):
+	username = forms.CharField(required=True)
+	password = forms.CharField(required=True, widget=forms.PasswordInput)
 
-class JobForm(forms.ModelForm):
-
-    class Meta:
-        model = Job
-        fields = ('name', 'location', 'price', 'description',)

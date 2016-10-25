@@ -5,13 +5,24 @@ from django.core import serializers
 import json
 import requests
 
+
 def getAllJobs(request):
-    all_jobs = requests.get('http://models-api:8000/api/v1/job/all/')
-    jobs_list = all_jobs
-    jobs_list = jobs_list.json()['resp']
+    jobs_list = requests.get('http://models-api:8000/api/v1/job/all/').json()['resp']
     return JsonResponse({'resp': jobs_list})     
     
 def getJob(request, jobID):
-    response = requests.get('http://models-api:8000/api/v1/job/' + str(jobID) + '/')
-    job = response.json()['resp']
-    return JsonResponse({'resp': job})     
+    job = requests.get('http://models-api:8000/api/v1/job/' + str(jobID) + '/').json()['resp']
+    return JsonResponse({'resp': job})
+
+def login(request):
+    auth_token = requests.post('http://models-api:8000/api/v1/auth/n/', request.POST).json()['resp']
+    return JsonResponse({'resp': job})
+    
+def _error_response(request, error_msg):
+    return JsonResponse({'ok': False, 'resp': error_msg})
+
+def _success_response(request, resp=None):
+    if resp:
+        return JsonResponse({'ok': True, 'resp': resp})
+    else:
+        return JsonResponse({'ok': True})
