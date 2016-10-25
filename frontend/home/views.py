@@ -9,6 +9,9 @@ from .forms import *
 from django.contrib.auth import hashers
 from django.contrib import messages
 from django.shortcuts import render_to_response
+
+
+
 def index(request):
     response = requests.get('http://exp-api:8000/api/v1/job/all/').json()['resp']
 
@@ -24,14 +27,16 @@ def login(request):
     if request.method == 'GET':
         login_form = LoginForm()
         next = request.GET.get('login') or reverse('index')
-        return render(request, 'home/login.html', {'form': login_form})#why need this?
+        return render(request, 'home/login.html', {'form': login_form})
     f = LoginForm(request.POST)
     if not f.is_valid():
         return HttpResponse("didnt fill in forms properly")
     username = f.cleaned_data['username']
     password = f.cleaned_data['password']
     next = reverse('index')
-    response = requests.post('http://exp-api:8000/api/v1/login/', data={'username':username, 'passowrd':password}).json()
+    response = requests.post('http://exp-api:8000/api/v1/login/', data={'username':username, 'password':password})
+    return HttpResponse(response)
+
     if not response['ok']:
         #error occurred
         return HttpResponse(response['resp'])
