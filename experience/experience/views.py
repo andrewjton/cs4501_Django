@@ -16,5 +16,13 @@ def getJob(request, jobID):
 
 def login(request):
     auth_token = requests.post('http://models-api:8000/api/v1/auth/n/', request.POST).json()['resp']
-    return JsonResponse({'resp': auth_token})
+    return JsonResponse({'resp': job})
     
+def _error_response(request, error_msg):
+    return JsonResponse({'ok': False, 'resp': error_msg})
+
+def _success_response(request, resp=None):
+    if resp:
+        return JsonResponse({'ok': True, 'resp': resp})
+    else:
+        return JsonResponse({'ok': True})

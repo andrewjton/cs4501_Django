@@ -233,7 +233,7 @@ def createAuth(request):
                                              date_created=timezone.now())
     except:
         return _error_response(request, "creation error")
-    return _success_response(request, result)
+    return _success_response(request, token)
 
 #should be post request for security?
 def getAuth(request, token):
