@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.core import serializers
 import json
 import requests
+from django.views.decorators.csrf import csrf_exempt
 
 
 def getAllJobs(request):
@@ -11,18 +12,21 @@ def getAllJobs(request):
     return JsonResponse({'resp': jobs_list})     
     
 def getJob(request, jobID):
-    job = requests.get('http://models-api:8000/api/v1/job/' + str(jobID) + '/').json()['resp']
-    return JsonResponse({'resp': job})
+	job = requests.get('http://models-api:8000/api/v1/job/' + str(jobID) + '/').json()['resp']
+	return JsonResponse({'resp': job})
 
 def login(request):
     auth_token = requests.post('http://models-api:8000/api/v1/auth/n/', request.POST).json()['resp']
     return JsonResponse({'resp': job})
-    
-def _error_response(request, error_msg):
-    return JsonResponse({'ok': False, 'resp': error_msg})
 
-def _success_response(request, resp=None):
-    if resp:
-        return JsonResponse({'ok': True, 'resp': resp})
-    else:
-        return JsonResponse({'ok': True})
+@csrf_exempt
+def createJob(request):
+#	return JsonResponse({'resp': 'hi'})
+	price = request.POST.get('price', 'default')
+	owner = request.POST.get('owner', 'default')
+	location = request.POST.get('location', 'default')
+	name = request.POST.get('name', 'default')
+	taken = request.POST.get('taken', 'false')
+	description = request.POST.get('description', 'default')
+	response = requests.post('http://models-api:8000/api/v1/job/n/', data={'price': price, 'owner': owner, 'location': location, 'name': name, 'taken': 'false', 'description': description}).json()['resp']
+	return JsonResponse({'resp': response})

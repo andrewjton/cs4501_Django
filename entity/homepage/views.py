@@ -110,30 +110,30 @@ def deleteUser(request):
 
 
 def createJob(request):
-    if request.method != 'POST':
-        return _error_response(request, "must make POST request")
-    if 'name' not in request.POST or \
+#	return JsonResponse({'resp': 'hi'})
+	if request.method != 'POST':
+		return _error_response(request, "must make POST request")
+	if 'name' not in request.POST or \
         'description' not in request.POST or \
         'price' not in request.POST or \
         'location' not in request.POST or \
         'cleaner' not in request.POST or \
         'owner' not in request.POST:
-        return _error_response(request, "missing required fields")
-    try:
-        j = Job(name=request.POST['name'],
-            description=request.POST['description'],
-            price=request.POST['price'],
-            location=request.POST['location'],
-            owner= User.objects.get(username = request.POST['owner']),
-            cleaner=User.objects.get(username = request.POST['user']),
-            date_created = timezone.now(),
-            taken=False)
-
-        j.save()
-    except:
-        return _error_response(request, "DB creation error")
+		return _error_response(request, "missing required fields")
+	try:
+		j = Job(name=request.POST['name'],
+			description=request.POST['description'],
+			price=request.POST['price'],
+			location=request.POST['location'],
+			owner= User.objects.get(username = request.POST['owner']),
+			cleaner=User.objects.get(username = request.POST['user']),
+			date_created = timezone.now(),
+			taken=False)
+		j.save()
+	except:
+		return _error_response(request, "DB creation error")
     
-    return _success_response(request, {'job_id': j.pk})
+	return _success_response(request, {'job_id': j.pk})
 
 def updateJob(request):
     if request.method != 'POST':

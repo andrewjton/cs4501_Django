@@ -11,6 +11,7 @@ from .forms import *
 from django.contrib.auth import hashers
 from django.contrib import messages
 from django.shortcuts import render_to_response
+
 def index(request):
     response = requests.get('http://exp-api:8000/api/v1/job/all/').json()['resp']
 
@@ -63,14 +64,19 @@ def addjob(request):
 	price = f.cleaned_data['price']
 	location = f.cleaned_data['location']
 	owner = 1
-	response = requests.post('http://exp-api:8000/api/v1/createJob/', data={'price': price, 'owner': owner, 'location': location, 'name': name, 'taken': false, 'description': description}).json()
-	if not response['ok']:
-        #error occurred
-		return HttpResponse(response['resp'])
-	response =HttpResponseRedirect('home/addjob.html')
+	'cleaner' not in request.POST or \
+	response = requests.post('http://exp-api:8000/api/v1/createJob/', data={'price': price, 
+																			'owner': owner, 
+																			'location': location, 
+																			'name': name, 
+																			'taken': 'false', 
+																			'description': description}).json()
+#	if not response['ok']:
+#        #error occurred
+#		return HttpResponse(response['resp'])
+	response =HttpResponseRedirect('/')
+	return response
 	
-	
-
 def logout_view(request):
     logout(request)
 
