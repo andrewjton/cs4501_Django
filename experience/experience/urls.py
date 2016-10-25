@@ -9,4 +9,5 @@ urlpatterns = patterns('',
 
       url(r'^api/v1/job/all/$', views.getAllJobs, name='getAllJobs'),
       url(r'^api/v1/job/(?P<jobID>\d+)/$', views.getJob, name='getJob'),
+      #add a CREATE JOB URL
 )
