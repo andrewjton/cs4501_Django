@@ -8,6 +8,14 @@
 	<form method="post" action="{% url 'register' %}">
 	<table>
 	<tr>
+	    <td>First Name: {{ form.first_name.label_tag }}</td>
+	    <td><input type="text"/>{{ form.first_name }}</td>
+	</tr>
+	<tr>
+	    <td>Last Name: {{ form.last_name.label_tag }}</td>
+	    <td><input type="text"/>{{ form.last_name }}</td>
+	</tr>
+	<tr>
 	    <td>Username: {{ form.username.label_tag }}</td>
 	    <td><input type="text"/>{{ form.username }}</td>
 	</tr>
@@ -29,3 +37,4 @@
 
 
  {% endblock %}
+ 

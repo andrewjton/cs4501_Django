@@ -15,7 +15,26 @@ def index(request):
 def about(request):
     return render(request, 'home/about.html', {})
 
+#front end  for recieving user input
 def register(request):
+    auth = request.COOKIES.get('auth')
+    if auth:
+       return HttpResponseRedirect(reverse('index'))
+
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = RegisterForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            # ...
+            # redirect to a new URL:
+            return HttpResponseRedirect(reverse('index'))
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = RegisterForm()
+
     return render(request, 'home/register.html', {})
 
 def login(request):
