@@ -27,13 +27,14 @@ def login(request):
         login_form = LoginForm()
         next = request.GET.get('login') or reverse('index')
         return render(request, 'home/login.html', {'form': login_form})#why need this?
+
     f = LoginForm(request.POST)
     if not f.is_valid():
-        return HttpResponse("didnt fill in forms properly")
+        return HttpResponse("didnt fill in forms properly") #put this in template as error message
     username = f.cleaned_data['username']
     password = f.cleaned_data['password']
     next = reverse('index')
-    response = requests.post('http://exp-api:8000/api/v1/login/', data={'username':username, 'passowrd':password}).json()
+    response = requests.post('http://exp-api:8000/api/v1/login/', data={'username':username, 'password':password}).json()
     if not response['ok']:
         #error occurred
         return HttpResponse(response['resp'])
@@ -50,9 +51,25 @@ def login(request):
     return render(request, 'home/login.html', {})
 
 def addjob(request):
-	#form = JobForm()
-	#return render(request, 'home/addjob.html', {'form': form})
-	return render(request, 'home/addjob.html', {})
+	if request.method == 'GET':
+		form = JobForm()
+		return render(request, 'home/addjob.html', {'form': form})
+	
+	f = JobForm(request.POST)
+	if not f.is_valid():
+		return HttpResponse("didnt fill in forms properly"); #put this in template as error message
+	name = f.cleaned_data['name']
+	description = f.cleaned_data['description']
+	price = f.cleaned_data['price']
+	location = f.cleaned_data['location']
+	owner = 1
+	response = requests.post('http://exp-api:8000/api/v1/createJob/', data={'price': price, 'owner': owner, 'location': location, 'name': name, 'taken': false, 'description': description}).json()
+	if not response['ok']:
+        #error occurred
+		return HttpResponse(response['resp'])
+	response =HttpResponseRedirect('home/addjob.html')
+	
+	
 
 def logout_view(request):
     logout(request)
