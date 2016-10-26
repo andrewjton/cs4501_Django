@@ -31,6 +31,8 @@ def login(request):
     if request.method == 'GET':
         login_form = LoginForm()
         next = request.GET.get('login') or reverse('index')
+        return render(request, 'home/login.html', {'form':login_form})
+
     f = LoginForm(request.POST)
     if not f.is_valid():
         return HttpResponse("didnt fill in forms properly") #put this in template as error message
