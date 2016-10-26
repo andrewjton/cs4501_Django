@@ -10,6 +10,7 @@ import json
 
 from .models import Job, User, Authenticator
 from django import db
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 
@@ -50,10 +51,9 @@ def createUser(request):
                                     last_name = request.POST["last_name"], \
                                     dob = request.POST["dob"], \
                                     date_created = timezone.now())
-        user.save()
     except:
         return _error_response(request, "DB creation error")
-    return _success_response(request, {'userid': user.pk})
+    return _success_response(request, {'username': user.username})
 
 def updateUser(request):
     if request.method != 'POST':
@@ -81,14 +81,16 @@ def getUser(request, username):
     if request.method != 'GET':
         return _error_response(request, "must make GET request")
     try:
-        u = User.objects.filter(username=username)
+        u = User.objects.get(username=username)
     except:
         return _error_response(request, "user not found")
-    return _success_response(request, {'username': u.username,      
+    return _success_response(request, {'user_id': u.id,
+                                       'username': u.username,
+                                       'password': u.password,
                                        'first_name': u.first_name,          
                                        'last_name': u.last_name,          
                                        'dob': u.dob,    
-                                       'date_created': u.date_created 
+                                       'date_created': u.date_created
                                        })
 
 def getAllUsers(request):
@@ -217,23 +219,20 @@ def _available_jobs():
 def createAuth(request):
     if request.method != 'POST':
         return _error_response(request, 'must make POST request')
-    if 'username' not in request.POST or \
-        'password' not in request.POST:
+    if 'user_id' not in request.POST:
         return _error_response(request, 'missing required fields')
-    if(Authenticator.objects.filter(username=request.POST['username']).exists()):
-        return _error_response(request, 'user already authenticated')
-    try:
-        u = User.objects.get(pk=request.POST['username'], password=request.POST['password'])
-    except:
-        return _error_response("username password combination not found")
+    
+    #if(Authenticator.objects.filter(user_id=request.POST['user_id']).exists()):
+     #   return _error_response(request, 'user already authenticated')
+    return JsonResponse({'resp':'hi'})
     try:
         code = hmac.new(key= settings.SECRET_KEY.encode('utf-8'), msg = os.urandom(32), digestmod = 'sha256').hexdigest()
         token = Authenticator.objects.create(authenticator=code, \
-                                             username=request.POST['username'], \
+                                             user_id=request.POST['user_id'], \
                                              date_created=timezone.now())
     except:
         return _error_response(request, "creation error")
-    return _success_response(request, token)
+    return _success_response(request, code)
 
 #should be post request for security?
 def getAuth(request, token):
@@ -259,7 +258,7 @@ def deleteAuth(request):
 
 def _error_response(request, error_msg):
     return JsonResponse({'ok': False, 'resp': error_msg})
-
+#@csrf_exempt
 def _success_response(request, resp=None):
     if resp:
         return JsonResponse({'ok': True, 'resp': resp})

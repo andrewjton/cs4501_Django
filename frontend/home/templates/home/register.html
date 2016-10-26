@@ -6,26 +6,14 @@
     <p>You are already logged in.  Please <a href="/logout">log out</a> to create a new account</p>
     {% else %}
 	<form method="post" action="{% url 'register' %}">
-	<table>
-	<tr>
-	    <td>Username: {{ form.username.label_tag }}</td>
-	    <td><input type="text"/>{{ form.username }}</td>
-	</tr>
-	<tr>
-	    <td>Password: {{ form.password.label_tag }}</td>
-	    <td><input type="text"/>{{ form.password }}</td>
-	</tr>
-	<tr>
-	    <td>Email: {{ form.email.label_tag }}</td>
-	    <td><input type="text"/>{{ form.email }}</td>
-	</tr>
-	</table>
+
+    {% csrf_token %}
+	{{ form }}
 
 	<input type="submit" value="register" />
 	<input type="hidden" name="next" value="{{ next }}" />
 	</form>
     
     {% endif %}
-
 
  {% endblock %}
