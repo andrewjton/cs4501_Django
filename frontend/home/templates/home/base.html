@@ -38,10 +38,10 @@
 	      <ul class="nav navbar-nav">
       {% if user.is_authenticated %}
           <li><a href="/logout/">Logout</a></li>
-		  <li><a href="/addjob/">Add Job</a></li>
+		  
 
       {% else %}
-
+<li><a href="/addjob/">Add Job</a></li>
           <li><a href="/register/">Register</a></li>
 
           <li><a href="/login/">Login</a></li>
