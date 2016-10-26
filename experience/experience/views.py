@@ -23,10 +23,10 @@ def login(request):
 def createJob(request):
 #	return JsonResponse({'resp': 'hi'})
 	price = request.POST.get('price', 'default')
-	owner = request.POST.get('owner', 'default')
+#	owner = request.POST.get('owner', 'default')
 	location = request.POST.get('location', 'default')
 	name = request.POST.get('name', 'default')
 	taken = request.POST.get('taken', 'false')
 	description = request.POST.get('description', 'default')
-	response = requests.post('http://models-api:8000/api/v1/job/n/', data={'price': price, 'owner': owner, 'location': location, 'name': name, 'taken': 'false', 'description': description}).json()['resp']
+	response = requests.post('http://models-api:8000/api/v1/job/n/', data={'price': price, 'location': location, 'name': name, 'taken': 'false', 'description': description}).json()['resp']
 	return JsonResponse({'resp': response})

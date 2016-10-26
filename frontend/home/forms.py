@@ -7,7 +7,7 @@ class LoginForm(forms.Form):
 class JobForm(forms.Form):
 	name = forms.CharField(required=True)
 	description = forms.CharField(widget=forms.Textarea)
-	price = forms.IntegerField(required=True)
+	price = forms.DecimalField(required=True)
 	location = forms.CharField(required=True)
 
 
