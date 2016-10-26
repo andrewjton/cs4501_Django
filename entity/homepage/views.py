@@ -128,7 +128,7 @@ def createJob(request):
 			price=request.POST['price'],
 			location=request.POST['location'],
 			owner= User.objects.get(username = request.POST['owner']),
-			cleaner=User.objects.get(username = request.POST['user']),
+			cleaner=User.objects.get(username = request.POST['cleaner']),
 			date_created = timezone.now(),
 			taken=False)
 		j.save()
