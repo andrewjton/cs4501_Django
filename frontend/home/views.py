@@ -61,14 +61,13 @@ def addjob(request):
 	description = f.cleaned_data['description']
 	price = f.cleaned_data['price']
 	location = f.cleaned_data['location']
-	#owner = 1
-	#cleaner = 1
-	response = requests.post('http://exp-api:8000/api/v1/createJob/', data={'price': price, 
-																		#	'owner': owner, 
-																		#	'cleaner': cleaner,
+	owner = "user1"
+	cleaner = "user1"
+	response = requests.post('http://exp-api:8000/api/v1/job/n/', data={'price': price, 
+																			'owner': owner, 
+																			'cleaner': cleaner,
 																			'location': location, 
 																			'name': name, 
-																			'taken': 'false', 
 																			'description': description}).json()
 #	if not response['ok']:
 #        #error occurred
