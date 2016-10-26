@@ -40,8 +40,8 @@ def createJob(request):
 	name = request.POST.get('name', 'default')
 	description = request.POST.get('description', 'default')
 	response = requests.post('http://models-api:8000/api/v1/job/n/', data={'price': price, 'location': location, 'name': name, 'description': description, 'owner':owner, 'cleaner':cleaner}).json()['resp']
-	return JsonResponse({'resp': response})
-
+	return _success_response(request, response)
+		
 def register(request):
     username = request.POST.get('username', 'none')
     password = request.POST.get('password', 'none')

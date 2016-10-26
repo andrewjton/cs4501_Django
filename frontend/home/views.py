@@ -35,7 +35,8 @@ def login(request):
 
     f = LoginForm(request.POST)
     if not f.is_valid():
-        return HttpResponse("didnt fill in forms properly") #put this in template as error message
+        login_form = LoginForm()
+        return render(request, 'home/login.html', {'errorMessage': "Please fill out all fields",'form': login_form})
     username = f.cleaned_data['username']
     password = f.cleaned_data['password']
     first_name  = f.cleaned_data['first_name']
@@ -45,7 +46,7 @@ def login(request):
     response = requests.post('http://exp-api:8000/api/v1/login/', data={'username':username, 'password':password}).json()
     if not response['ok']:
         #error occurred
-        return HttpResponse(response['resp'])
+        return render(request, 'home/login.html', {'errorMessage': "DB write error",'form': login_form})
     auth_token = response['resp']
     response =HttpResponseRedirect('home/index.html')
     response.set_cookie("auth", auth_token)
@@ -55,10 +56,10 @@ def addjob(request):
 	if request.method == 'GET':
 		form = JobForm()
 		return render(request, 'home/addjob.html', {'form': form})
-	
 	f = JobForm(request.POST)
 	if not f.is_valid():
-		return HttpResponse("didnt fill in forms properly"); #put this in template as error message
+		form = JobForm()
+		return render(request, 'home/addjob.html', {'errorMessage': "Please fill out all fields",'form': form})
 	name = f.cleaned_data['name']
 	description = f.cleaned_data['description']
 	price = f.cleaned_data['price']
@@ -71,9 +72,9 @@ def addjob(request):
 																			'location': location, 
 																			'name': name, 
 																			'description': description}).json()
-#	if not response['ok']:
-#        #error occurred
-#		return HttpResponse(response['resp'])
+	if not response['ok']:
+        #error occurred
+		return render(request, 'home/addjob.html', {'errorMessage': "DB Write error",'form': form})
 	response =HttpResponseRedirect('/')
 	return response
 	
@@ -86,7 +87,8 @@ def register(request):
         return render(request, 'home/register.html', {'form': register_form})
     f = RegisterForm(request.POST)
     if not f.is_valid():
-        return HttpResponse("didnt fill in forms properly")
+        register_form = RegisterForm()
+        return render(request, 'home/register.html', {'errorMessage': "Please fill out all fields", 'form': register_form})
     username = f.cleaned_data['username']
     password = f.cleaned_data['password']
     first_name = f.cleaned_data['first_name']
@@ -99,7 +101,7 @@ def register(request):
                                                                            'dob':dob}).json()
     next = reverse('login')
     if not response['ok']:
-        return HttpResponse("invalid signup message")
+        return render(request, 'home/register.html', {'errorMessage': "Invalid signup", 'form': register_form})
     return HttpResponseRedirect(next)
 
     
