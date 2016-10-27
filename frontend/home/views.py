@@ -45,7 +45,7 @@ def login(request):
         #error occurred
         return render(request, 'home/login.html', {'errorMessage': "DB write error",'form': login_form})
     auth_token = response['resp']
-    response =HttpResponseRedirect('home/index.html')
+    response =HttpResponseRedirect('index')
     response.set_cookie("auth", auth_token)
     return response
 
