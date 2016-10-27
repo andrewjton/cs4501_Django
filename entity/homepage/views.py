@@ -247,10 +247,10 @@ def getAuth(request, token):
 def deleteAuth(request):
     if request.method != 'POST':
         return _error_response(request, 'must make POST request')
-    if 'username' not in request.POST:
+    if 'authenticator' not in request.POST:
         return _error_response(request, 'missing required fields')
     try:
-        Authenticator.objects.filter(username=request.POST['username']).delete()
+        Authenticator.objects.filter(authenticator=request.POST['authenticator']).delete()
     except:
         return _error_response(request, "deletion error")
     return _success_response(request)

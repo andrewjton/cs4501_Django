@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.core.urlresolvers import reverse
-from homepage.models import User, Job
+from homepage.models import User, Job, Authenticator
 import json
 from django.utils import timezone
 import homepage.views
@@ -138,7 +138,8 @@ class TestJobAPI(TestCase):
                                                          'location' : 'somewhere', \
                                                          'description' : 'test job', \
                                                          'price' : 5.0, \
-                                                         'owner' : User.objects.get(pk=1)})
+                                                         'owner' : User.objects.get(pk=1), \
+														 'cleaner' : User.objects.get(pk=1)})
         self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True) 
 
     def test_get_job(self, job_id=1):
@@ -195,10 +196,69 @@ class TestJobAPI(TestCase):
         response = self.client.post('/api/v1/job/d/', {'job_id' : job_id})
         self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)
         
-
     def tearDown(self):
         pass
+	
+class AuthAPITest(TestCase):	
+	def setUp(self):
+	
+		User.objects.create(username='username',                         
+						first_name='first name',                            
+						last_name='last name',
+						date_created = timezone.now(),
+						dob= timezone.now(),
+						id = 1)
+	
+		Authenticator.objects.create(authenticator='authenticator',                         
+        			user_id=User.objects.get(pk=1),                            
+                  	date_created = timezone.now())
+	
+	def test_create_auth(self):
+		#must make POST request
+		response = self.client.get('/api/v1/auth/n/')
+		self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "must make POST request")
+	
+		#missing required fields
+		response = self.client.post('/api/v1/auth/n/')
+		self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "missing required fields")
+	
+		#success
+		response = self.client.post('/api/v1/auth/n/', {'user_id' : User.objects.get(pk=1)})
+		self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)
+	
+	def test_get_auth(self, token="user1"):
+		#must make GET request
+		response = self.client.post('/api/v1/auth/')
+		self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "must make GET request")
+		
+		#token not found
+		response = self.client.get('/api/v1/auth/', {'token' : 10000})
+		self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "token not found")
+	
+		#success
+		response = self.client.get('/api/v1/auth/', {'token' : token})
+		self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)
+		
+	
+	def test_delete_auth(self, authenticator="authenticator"):
+		#must make POST request
+		response = self.client.get('/api/v1/auth/d/')
+		self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "must make POST request")
+	
+		#missing required fields
+		response = self.client.post('/api/v1/auth/d/')
+		self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "missing required fields")
+	
+		#no authenticator
+		response = self.client.post('/api/v1/auth/d/', {'authenticator' : 'incorrect'})
+		self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "deletion error")
+	
+		#success
+		response = self.client.post('/api/v1/auth/d/', {'authenticator' : authenticator})
+		self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)
 
+	def tearDown(self):
+		pass
 
 
 
