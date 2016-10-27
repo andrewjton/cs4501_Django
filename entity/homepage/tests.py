@@ -5,6 +5,7 @@ import json
 from django.utils import timezone
 import homepage.views
 from django.forms.models import model_to_dict
+from django.contrib.auth import hashers
 
 
 class UserAPITest(TestCase):
@@ -17,17 +18,17 @@ class UserAPITest(TestCase):
                      id = 1)
 
 
-    def test_get_user(self, user_id=1):
+    def test_get_user(self, username='username'):
         
         #must make GET request
-        response = self.client.post('/api/v1/user/'+str(user_id)+'/', {})
+        response = self.client.post('/api/v1/user/'+str(username)+'/', {})
         self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "must make GET request")
         
         #user not found
         response = self.client.get('/api/v1/user/10000/')
         self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "user not found")
         #success
-        response = self.client.get('/api/v1/user/'+str(user_id)+'/') 
+        response = self.client.get('/api/v1/user/'+str(username)+'/') 
         self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)    
     
 
@@ -57,7 +58,7 @@ class UserAPITest(TestCase):
         response = self.client.post('/api/v1/user/u/', {'user_id' : user_id, 'first_name' : 'New First Name'})
         self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)
     
-    def test_delete_user(self, user_id=1):
+    def test_delete_user(self, username='username'):
         #must make POST request
         response = self.client.get('/api/v1/user/d/')
         self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "must make POST request")
@@ -67,8 +68,9 @@ class UserAPITest(TestCase):
         self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "invalid request parameters")
 
         #success
-        response = self.client.post('/api/v1/user/d/', {'user_id' : user_id})
+        response = self.client.post('/api/v1/user/d/', {'username' : username})
         self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)
+        
     def test_create_user(self):
         #must make POST request
         response = self.client.get('/api/v1/user/n/')
@@ -83,6 +85,7 @@ class UserAPITest(TestCase):
          
         #successful creation
         response = self.client.post('/api/v1/user/n/', {'username' : 'user1', \
+                                                        'password' : hashers.make_password('password'), \
                                                          'first_name' : 'first_name', \
                                                          'last_name' : 'last_name', \
                                                          'dob' : timezone.now()})
@@ -170,7 +173,7 @@ class TestJobAPI(TestCase):
         #success
         response = self.client.post('/api/v1/job/u/', {'job_id' : job_id, 'description' : 'New Description'})
         self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)
-        
+            
         
     def test_get_all_jobs(self):
         #must make GET request

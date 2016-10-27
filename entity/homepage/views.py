@@ -104,7 +104,8 @@ def deleteUser(request):
     if request.method != 'POST':
         return _error_response(request, "must make POST request")
     try:
-        User.objects.get(pk=int(request.POST['username'])).delete()
+        name = request.POST['username']
+        User.objects.get(username=name).delete()
     except:
         return _error_response(request, "invalid request parameters")
     return _success_response(request)
