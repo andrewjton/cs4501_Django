@@ -27,7 +27,7 @@ def about(request):
 def login(request):
     auth = request.COOKIES.get('auth')
     if auth:
-        return HttpResponse("redirect")
+        return HttpResponseRedirect(reverse('index'))
     if request.method == 'GET':
         login_form = LoginForm()
         next = request.GET.get('login') or reverse('index')
@@ -51,30 +51,34 @@ def login(request):
     return response
 
 def addjob(request):
-	if request.method == 'GET':
-		form = JobForm()
-		return render(request, 'home/addjob.html', {'form': form})
-	f = JobForm(request.POST)
-	if not f.is_valid():
-		form = JobForm()
-		return render(request, 'home/addjob.html', {'errorMessage': "Please fill out all fields",'form': form})
-	name = f.cleaned_data['name']
-	description = f.cleaned_data['description']
-	price = f.cleaned_data['price']
-	location = f.cleaned_data['location']
-	owner = "user1"
-	cleaner = "user1"
-	response = requests.post('http://exp-api:8000/api/v1/job/n/', data={'price': price, 
+    auth = request.COOKIES.get('auth')
+    if not auth:
+        return HttpResponseRedirect(reverse('login'))
+    if request.method == 'GET':
+        form = JobForm()
+        return render(request, 'home/addjob.html', {'form': form})
+    f = JobForm(request.POST)
+    if not f.is_valid():
+        form = JobForm()
+        return render(request, 'home/addjob.html', {'errorMessage': "Please fill out all fields",'form': form})
+    name = f.cleaned_data['name']
+    description = f.cleaned_data['description']
+    price = f.cleaned_data['price']
+    location = f.cleaned_data['location']
+    owner = "user1"
+    cleaner = "user1"
+    response = requests.post('http://exp-api:8000/api/v1/job/n/', data={'price': price, 
 																			'owner': owner, 
 																			'cleaner': cleaner,
 																			'location': location, 
-																			'name': name, 
+																			'name': name,
+																			'auth':auth,
 																			'description': description}).json()
-	if not response['ok']:
+    if not response['ok']:
         #error occurred
-		return render(request, 'home/addjob.html', {'errorMessage': "DB Write error",'form': form})
-	response =HttpResponseRedirect('/')
-	return response
+        return render(request, 'home/addjob.html', {'errorMessage': "DB Write error",'form': form})
+    response =HttpResponseRedirect('/')
+    return response
 	
 def logout_view(request):
     logout(request)
