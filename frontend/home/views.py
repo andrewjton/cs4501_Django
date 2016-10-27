@@ -38,11 +38,9 @@ def login(request):
         return HttpResponse("didnt fill in forms properly") #put this in template as error message
     username = f.cleaned_data['username']
     password = f.cleaned_data['password']
-    first_name  = f.cleaned_data['first_name']
-    last_name = f.cleaned_data['last_name']
-    dob = timezone.now();
     next = reverse('index')
     response = requests.post('http://exp-api:8000/api/v1/login/', data={'username':username, 'password':password}).json()
+    return HttpResponse(response['resp'])
     if not response['ok']:
         #error occurred
         return HttpResponse(response['resp'])
