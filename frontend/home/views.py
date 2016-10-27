@@ -41,7 +41,6 @@ def login(request):
     password = f.cleaned_data['password']
     next = reverse('index')
     response = requests.post('http://exp-api:8000/api/v1/login/', data={'username':username, 'password':password}).json()
-    return HttpResponse(response['resp'])
     if not response['ok']:
         #error occurred
         return render(request, 'home/login.html', {'errorMessage': "DB write error",'form': login_form})
@@ -49,6 +48,13 @@ def login(request):
     response =HttpResponseRedirect('home/index.html')
     response.set_cookie("auth", auth_token)
     return response
+
+def logout(request):
+	auth = request.COOKIES.get('auth')
+	if not auth:
+		return HttpResponseRedirect(reverse('login'))
+	response = requests.post('http://exp-ap:8000/api/v1/logout/')
+
 
 def addjob(request):
     auth = request.COOKIES.get('auth')
