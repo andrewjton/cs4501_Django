@@ -49,10 +49,18 @@ def login(request):
     response.set_cookie("auth", auth_token)
     return response
 
+def logout(request):
+	auth = request.COOKIES.get('auth')
+	if not auth:
+		return HttpResponseRedirect(reverse('login'))
+	response = requests.post('http://exp-ap:8000/api/v1/logout/')
+
+
 def addjob(request):
     auth = request.COOKIES.get('auth')
     if not auth:
         return HttpResponseRedirect(reverse("login"))
+
     if request.method == 'GET':
         form = JobForm()
         return render(request, 'home/addjob.html', {'form': form})
@@ -67,14 +75,16 @@ def addjob(request):
     owner = "user1"
     cleaner = "user1"
     response = requests.post('http://exp-api:8000/api/v1/job/n/', data={'price': price, \
-                                                                            'owner': owner, \
-                                                                            'cleaner': cleaner, \
-                                                                            'location': location, \
-'                                                                            name': name, \
+																			'owner': owner, \
+																			'cleaner': cleaner, \
+																			'location': location, \
+																			'name': name, \
+																			'auth':auth, \
 																			'description': description}).json()
     if not response['ok']:
+        #error occurred
         return render(request, 'home/addjob.html', {'errorMessage': "DB Write error",'form': form})
-    response =HttpResponseRedirect('/')
+    response = HttpResponseRedirect('/')
     return response
 	
 def logout_view(request):

@@ -32,22 +32,31 @@ def login(request):
             #create auth
             auth_resp = requests.post('http://models-api:8000/api/v1/auth/n/', data={"user_id":user['user_id']}).json()
             return JsonResponse(auth_resp)
-        else:
-            #return invalid password
-            return JsonResponse({}, content_type="application/json")
-    return JsonResponse(user)
+    #else wrong password
+    return JsonResponse({'ok':False,'resp':'invalid password'})
 
+def logout(request):
+    auth = request.POST.get('auth', 'default')
+    response = requests.post('http://models-api:8000/api/v1/auth/d/',data={'auth':auth})
+    return JsonResponse(response)
+    
+    
 @csrf_exempt
 def createJob(request):
 #	return JsonResponse({'resp': 'hi'})
-	price = request.POST.get('price', 'default')
-	owner = request.POST.get('owner', 'default')
-	cleaner = request.POST.get('cleaner', 'default')
-	location = request.POST.get('location', 'default')
-	name = request.POST.get('name', 'default')
-	description = request.POST.get('description', 'default')
-	response = requests.post('http://models-api:8000/api/v1/job/n/', data={'price': price, 'location': location, 'name': name, 'description': description, 'owner':owner, 'cleaner':cleaner}).json()['resp']
-	return _success_response(request, response)
+    auth = request.POST.get('auth', 'none')
+    price = request.POST.get('price', 'default')
+    owner = request.POST.get('owner', 'default')
+    cleaner = request.POST.get('cleaner', 'default')
+    location = request.POST.get('location', 'default')
+    name = request.POST.get('name', 'default')
+    description = request.POST.get('description', 'default')
+    
+    response = requests.post('http://models-api:8000/api/v1/auth/'+auth+'/').json()
+    if not response['ok']:
+        return JsonResponse(response)
+    response = requests.post('http://models-api:8000/api/v1/job/n/', data={'price': price, 'location': location, 'name': name, 'description': description, 'owner':owner, 'cleaner':cleaner}).json()['resp']
+    return JsonResponse(response)
 
 @csrf_exempt
 def register(request):
@@ -63,11 +72,3 @@ def register(request):
                                                                          'dob':dob}).json()
     return JsonResponse(user, safe=False)
     
-def _error_response(request, error_msg):
-    return JsonResponse({'ok': False, 'resp': error_msg})
-
-def _success_response(request, resp=None):
-    if resp:
-        return JsonResponse({'ok': True, 'resp': resp})
-    else:
-        return JsonResponse({'ok': True})
