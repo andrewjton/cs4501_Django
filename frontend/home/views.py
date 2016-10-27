@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django import forms
 from django.http import HttpResponse
+from django.http import JsonResponse
 from django.contrib.auth import logout
 #from .forms import JobForm
 import requests
@@ -25,12 +26,13 @@ def about(request):
 
 def login(request):
     auth = request.COOKIES.get('auth')
-    if auth:
-        return HttpResponseRedirect(reverse('index'))
+   # return JsonResponse({'resp':auth})
+ #   if auth:
+       # return HttpResponseRedirect(reverse('index'))
     if request.method == 'GET':
         login_form = LoginForm()
-        next = request.GET.get('login') or reverse('index')
-        return render(request, 'home/login.html', {'form':login_form})
+        #next = request.GET.get('login') or reverse('index')
+        return render(request, 'home/login.html', {'form':login_form, 'auth':auth})
 
     f = LoginForm(request.POST)
     if not f.is_valid():
@@ -53,14 +55,11 @@ def logout(request):
 	auth = request.COOKIES.get('auth')
 	if not auth:
 		return HttpResponseRedirect(reverse('login'))
-	response = requests.post('http://exp-ap:8000/api/v1/logout/')
+	response = requests.post('http://exp-api:8000/api/v1/logout/')
+	return render(request, 'home/index.html')
 
 
 def addjob(request):
-    auth = request.COOKIES.get('auth')
-    if not auth:
-        return HttpResponseRedirect(reverse("login"))
-
     if request.method == 'GET':
         form = JobForm()
         return render(request, 'home/addjob.html', {'form': form})
@@ -68,6 +67,7 @@ def addjob(request):
     if not f.is_valid():
         form = JobForm()
         return render(request, 'home/addjob.html', {'errorMessage': "Please fill out all fields",'form': form})
+    form = JobForm()
     name = f.cleaned_data['name']
     description = f.cleaned_data['description']
     price = f.cleaned_data['price']
@@ -79,7 +79,6 @@ def addjob(request):
                                                                            'cleaner': cleaner, \
                                                                            'location': location, \
                                                                            'name': name, \
-                                                                           'auth':auth, \
                                                                            'description': description}).json()
     if not response['ok']:
         #error occurred
