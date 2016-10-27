@@ -27,7 +27,7 @@ def about(request):
 def login(request):
     auth = request.COOKIES.get('auth')
     if auth:
-        return HttpResponse("redirect")
+        return HttpResponseRedirect(reverse('index'))
     if request.method == 'GET':
         login_form = LoginForm()
         next = request.GET.get('login') or reverse('index')
@@ -41,12 +41,11 @@ def login(request):
     password = f.cleaned_data['password']
     next = reverse('index')
     response = requests.post('http://exp-api:8000/api/v1/login/', data={'username':username, 'password':password}).json()
-    return HttpResponse(response['resp'])
     if not response['ok']:
         #error occurred
         return render(request, 'home/login.html', {'errorMessage': "DB write error",'form': login_form})
     auth_token = response['resp']
-    response =HttpResponseRedirect('home/index.html')
+    response =HttpResponseRedirect('index')
     response.set_cookie("auth", auth_token)
     return response
 
