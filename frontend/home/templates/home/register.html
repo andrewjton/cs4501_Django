@@ -5,10 +5,11 @@
     {% if user.is_authenticated %}
     <p>You are already logged in.  Please <a href="/logout">log out</a> to create a new account</p>
     {% else %}
+	{{ errorMessage }}
 	<form method="post" action="{% url 'register' %}">
 
     {% csrf_token %}
-	{{ form }}
+	{{ form.as_p }}
 
 	<input type="submit" value="register" />
 	<input type="hidden" name="next" value="{{ next }}" />
