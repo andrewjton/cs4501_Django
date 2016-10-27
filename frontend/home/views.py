@@ -40,12 +40,12 @@ def login(request):
     password = f.cleaned_data['password']
     next = reverse('index')
     response = requests.post('http://exp-api:8000/api/v1/login/', data={'username':username, 'password':password}).json()
-    if not response:
+    if  response['ok'] == False:
         #error occurred
         login_form = LoginForm()
-        return render(request, 'home/login.html', {'errorMessage': "DB write error",'form': login_form})
+        return render(request, 'home/login.html', {'errorMessage': "Incorrect password",'form': login_form})
     auth_token = response['resp']
-    response =HttpResponseRedirect('index')
+    response = HttpResponseRedirect(reverse('index'))
     response.set_cookie("auth", auth_token)
     return response
 
