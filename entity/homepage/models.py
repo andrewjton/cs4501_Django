@@ -25,7 +25,7 @@ class Job(models.Model):
     
 class Authenticator(models.Model):
     authenticator = models.CharField(max_length=254, primary_key=True) #primary key: authenticator
-    user_id = models.ForeignKey(User)#user_id_id
+    user_id = models.CharField(max_length=200)#user_id_id
     date_created = models.DateTimeField('date created')#date created
     def __str__(self):
         return self.user_id.name

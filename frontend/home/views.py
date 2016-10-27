@@ -39,11 +39,9 @@ def login(request):
         return render(request, 'home/login.html', {'errorMessage': "Please fill out all fields",'form': login_form})
     username = f.cleaned_data['username']
     password = f.cleaned_data['password']
-    first_name  = f.cleaned_data['first_name']
-    last_name = f.cleaned_data['last_name']
-    dob = timezone.now();
     next = reverse('index')
     response = requests.post('http://exp-api:8000/api/v1/login/', data={'username':username, 'password':password}).json()
+    return HttpResponse(response['resp'])
     if not response['ok']:
         #error occurred
         return render(request, 'home/login.html', {'errorMessage': "DB write error",'form': login_form})
