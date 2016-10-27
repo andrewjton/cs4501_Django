@@ -20,14 +20,21 @@ def getJob(request, jobID):
 def login(request):
     username = request.POST.get('username', 'none')
     posted_pass = request.POST.get('password', 'none')
-    user = requests.get('http://models-api:8000/api/v1/user/'+username+'/').json()
-    if user['ok'] == True:
+
+    response = requests.get('http://models-api:8000/api/v1/user/'+username+'/').json()
+
+    if response['ok'] == True:
         #check passwords
-        user_pass = user['resp']['password']
+        user = response['resp']
+        user_pass = user['password']
+
         if hashers.check_password(posted_pass, user_pass):
             #create auth
-            auth_resp = requests.post('http://models-api:8000/api/v1/auth/n/', data={"user_id":user.id}).json()
+            auth_resp = requests.post('http://models-api:8000/api/v1/auth/n/', data={"user_id":user['user_id']}).json()
             return JsonResponse(auth_resp)
+        else:
+            #return invalid password
+            pass
     return JsonResponse(user)
 
 @csrf_exempt
@@ -40,7 +47,7 @@ def createJob(request):
 	name = request.POST.get('name', 'default')
 	description = request.POST.get('description', 'default')
 	response = requests.post('http://models-api:8000/api/v1/job/n/', data={'price': price, 'location': location, 'name': name, 'description': description, 'owner':owner, 'cleaner':cleaner}).json()['resp']
-	return JsonResponse({'resp': response})
+	return _success_response(request, response)
 
 @csrf_exempt
 def register(request):

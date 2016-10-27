@@ -7,11 +7,13 @@ from django.forms.models import model_to_dict
 from django.contrib.auth import hashers
 from django.utils import timezone
 import json
-
+import os
+import hmac
+from wiz import settings
 from .models import Job, User, Authenticator
 from django import db
 from django.views.decorators.csrf import csrf_exempt
-
+import datetime
 # Create your views here.
 
 ### API ###
@@ -225,12 +227,17 @@ def createAuth(request):
     
     #if(Authenticator.objects.filter(user_id=request.POST['user_id']).exists()):
      #   return _error_response(request, 'user already authenticated')
-    return JsonResponse({'resp':'hi'})
     try:
         code = hmac.new(key= settings.SECRET_KEY.encode('utf-8'), msg = os.urandom(32), digestmod = 'sha256').hexdigest()
+        user = User.objects.get(pk=request.POST['user_id'])
+        #TODO: change user to charfield
+        return JsonResponse({"resp":code})
+
         token = Authenticator.objects.create(authenticator=code, \
-                                             user_id=request.POST['user_id'], \
+                                             user_id=user, \
                                              date_created=timezone.now())
+
+
     except:
         return _error_response(request, "creation error")
     return _success_response(request, code)
