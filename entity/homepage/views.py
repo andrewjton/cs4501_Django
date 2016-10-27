@@ -123,6 +123,7 @@ def createJob(request):
         'price' not in request.POST or \
         'location' not in request.POST or \
         'cleaner' not in request.POST or \
+        'date_created' not in request.POST or \
         'owner' not in request.POST:
 		return _error_response(request, "missing required fields")
 	try:

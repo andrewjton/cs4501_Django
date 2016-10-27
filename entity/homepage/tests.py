@@ -112,6 +112,8 @@ class TestJobAPI(TestCase):
                      location='somewhere',                             
                      price= 5.0,  
                      taken = False,
+                     date_created = timezone.now(),
+                     cleaner = User.objects.get(pk=1),
                      owner = User.objects.get(pk=1),
                      id = 1) 
         
@@ -133,6 +135,8 @@ class TestJobAPI(TestCase):
                                                          'location' : 'somewhere', \
                                                          'description' : 6, \
                                                          'price' : "5", \
+                                                         'date_created' : "2016-10-27", \
+                                                         'cleaner' : "", \
                                                          'owner' : ""})  
         self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "DB creation error")
         
@@ -141,6 +145,8 @@ class TestJobAPI(TestCase):
                                                          'location' : 'somewhere', \
                                                          'description' : 'test job', \
                                                          'price' : 5.0, \
+                                                         'date_created' : "2016-10-27", \
+                                                         'cleaner' : User.objects.get(pk=1), \
                                                          'owner' : User.objects.get(pk=1)})
         self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True) 
 
