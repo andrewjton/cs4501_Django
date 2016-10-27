@@ -34,7 +34,7 @@ def login(request):
             return JsonResponse(auth_resp)
         else:
             #return invalid password
-            pass
+            return JsonResponse({}, content_type="application/json")
     return JsonResponse(user)
 
 @csrf_exempt

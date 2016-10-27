@@ -16,7 +16,6 @@ from django.utils import timezone
 
 def index(request):
     response = requests.get('http://exp-api:8000/api/v1/job/all/').json()['resp']
-
     return render(request, 'home/index.html', {'allJobs': response})
 
 def about(request):
@@ -41,8 +40,9 @@ def login(request):
     password = f.cleaned_data['password']
     next = reverse('index')
     response = requests.post('http://exp-api:8000/api/v1/login/', data={'username':username, 'password':password}).json()
-    if not response['ok']:
+    if not response:
         #error occurred
+        login_form = LoginForm()
         return render(request, 'home/login.html', {'errorMessage': "DB write error",'form': login_form})
     auth_token = response['resp']
     response =HttpResponseRedirect('index')
@@ -50,30 +50,32 @@ def login(request):
     return response
 
 def addjob(request):
-	if request.method == 'GET':
-		form = JobForm()
-		return render(request, 'home/addjob.html', {'form': form})
-	f = JobForm(request.POST)
-	if not f.is_valid():
-		form = JobForm()
-		return render(request, 'home/addjob.html', {'errorMessage': "Please fill out all fields",'form': form})
-	name = f.cleaned_data['name']
-	description = f.cleaned_data['description']
-	price = f.cleaned_data['price']
-	location = f.cleaned_data['location']
-	owner = "user1"
-	cleaner = "user1"
-	response = requests.post('http://exp-api:8000/api/v1/job/n/', data={'price': price, 
-																			'owner': owner, 
-																			'cleaner': cleaner,
-																			'location': location, 
-																			'name': name, 
+    auth = request.COOKIES.get('auth')
+    if not auth:
+        return HttpResponseRedirect(reverse("login"))
+    if request.method == 'GET':
+        form = JobForm()
+        return render(request, 'home/addjob.html', {'form': form})
+    f = JobForm(request.POST)
+    if not f.is_valid():
+        form = JobForm()
+        return render(request, 'home/addjob.html', {'errorMessage': "Please fill out all fields",'form': form})
+    name = f.cleaned_data['name']
+    description = f.cleaned_data['description']
+    price = f.cleaned_data['price']
+    location = f.cleaned_data['location']
+    owner = "user1"
+    cleaner = "user1"
+    response = requests.post('http://exp-api:8000/api/v1/job/n/', data={'price': price, \
+                                                                            'owner': owner, \
+                                                                            'cleaner': cleaner, \
+                                                                            'location': location, \
+'                                                                            name': name, \
 																			'description': description}).json()
-	if not response['ok']:
-        #error occurred
-		return render(request, 'home/addjob.html', {'errorMessage': "DB Write error",'form': form})
-	response =HttpResponseRedirect('/')
-	return response
+    if not response['ok']:
+        return render(request, 'home/addjob.html', {'errorMessage': "DB Write error",'form': form})
+    response =HttpResponseRedirect('/')
+    return response
 	
 def logout_view(request):
     logout(request)
