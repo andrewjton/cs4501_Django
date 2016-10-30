@@ -232,7 +232,8 @@ def createAuth(request):
         code = hmac.new(key= settings.SECRET_KEY.encode('utf-8'), msg = os.urandom(32), digestmod = 'sha256').hexdigest()
         user = User.objects.get(pk=request.POST['user_id'])
         #TODO: change user to charfield
-        # return JsonResponse({"resp":code})
+        return JsonResponse({"ok":True,"resp":code})
+
         token = Authenticator.objects.create(authenticator=code, \
                                              user_id=user, \
                                              date_created=timezone.now())
@@ -255,10 +256,10 @@ def getAuth(request, token):
 def deleteAuth(request):
     if request.method != 'POST':
         return _error_response(request, 'must make POST request')
-    if 'authenticator' not in request.POST:
+    if 'auth' not in request.POST:
         return _error_response(request, 'missing required fields')
     try:
-        Authenticator.objects.get(authenticator=request.POST['authenticator']).delete()
+        Authenticator.objects.filter(authenticator=request.POST['auth']).delete()
     except:
         return _error_response(request, "deletion error")
     return _success_response(request)

@@ -27,27 +27,23 @@ def about(request):
 def login(request):
     auth = request.COOKIES.get('auth')
     if auth:
-        return HttpResponseRedirect(reverse('index'))
+        pass#return HttpResponseRedirect(reverse('index'))
     if request.method == 'GET':
         login_form = LoginForm()
-        next = request.GET.get('login') or reverse('index')
         return render(request, 'home/login.html', {'form':login_form})
-
     f = LoginForm(request.POST)
     if not f.is_valid():
         login_form = LoginForm()
         return render(request, 'home/login.html', {'errorMessage': "Please fill out all fields",'form': login_form})
     username = f.cleaned_data['username']
     password = f.cleaned_data['password']
-    next = reverse('index')
     response = requests.post('http://exp-api:8000/api/v1/login/', data={'username':username, 'password':password}).json()
     if not response['ok']:
         #error occurred
         return render(request, 'home/login.html', {'errorMessage': "DB write error",'form': login_form})
     auth_token = response['resp']
-    response =HttpResponseRedirect('index')
-    response.set_cookie("auth", auth_token)
-    return response
+    request.set_cookie("auth",auth_token)
+    return HttpResponseRedirect(reverse('index'))
 
 def logout(request):
 	auth = request.COOKIES.get('auth')
