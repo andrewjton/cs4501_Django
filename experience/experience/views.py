@@ -34,29 +34,24 @@ def login(request):
             return JsonResponse(auth_resp)
     #else wrong password
     return JsonResponse({'ok':False,'resp':'invalid password'})
-
+@csrf_exempt
 def logout(request):
     auth = request.POST.get('auth', 'default')
-    response = requests.post('http://models-api:8000/api/v1/auth/d/',data={'auth':auth})
+    response = requests.post('http://models-api:8000/api/v1/auth/d/',data={'auth':auth}).json()
     return JsonResponse(response)
     
     
 @csrf_exempt
 def createJob(request):
 #	return JsonResponse({'resp': 'hi'})
-    auth = request.POST.get('auth', 'none')
     price = request.POST.get('price', 'default')
     owner = request.POST.get('owner', 'default')
     cleaner = request.POST.get('cleaner', 'default')
     location = request.POST.get('location', 'default')
     name = request.POST.get('name', 'default')
     description = request.POST.get('description', 'default')
-    
-    response = requests.post('http://models-api:8000/api/v1/auth/'+auth+'/').json()
-    if not response['ok']:
-        return JsonResponse(response)
-    response = requests.post('http://models-api:8000/api/v1/job/n/', data={'price': price, 'location': location, 'name': name, 'description': description, 'owner':owner, 'cleaner':cleaner}).json()['resp']
-    return JsonResponse(response)
+    response = requests.post('http://models-api:8000/api/v1/job/n/', data={'price': price, 'location': location, 'name': name, 'description': description, 'owner':owner, 'cleaner':cleaner}).json()
+    return JsonResponse(response,safe=False)
 
 @csrf_exempt
 def register(request):

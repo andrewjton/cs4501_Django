@@ -123,7 +123,6 @@ def createJob(request):
         'price' not in request.POST or \
         'location' not in request.POST or \
         'cleaner' not in request.POST or \
-        'date_created' not in request.POST or \
         'owner' not in request.POST:
 		return _error_response(request, "missing required fields")
 	try:
@@ -138,7 +137,6 @@ def createJob(request):
 		j.save()
 	except:
 		return _error_response(request, "DB creation error")
-    
 	return _success_response(request, {'job_id': j.pk})
 
 def updateJob(request):
@@ -253,12 +251,14 @@ def getAuth(request, token):
         return _error_response("token not found")
     return _success_response(request)
 
+
 def deleteAuth(request):
     if request.method != 'POST':
         return _error_response(request, 'must make POST request')
     if 'auth' not in request.POST:
         return _error_response(request, 'missing required fields')
     try:
+
         Authenticator.objects.filter(authenticator=request.POST['auth']).delete()
     except:
         return _error_response(request, "deletion error")
