@@ -63,9 +63,9 @@ def logout(request):
     auth = request.COOKIES.get('auth')
     if not auth:
         return HttpResponseRedirect(reverse('login'))
-    response = HttpResponseRedirect('index')
+    response = HttpResponseRedirect(reverse('index'))
     response.delete_cookie("auth")
-    delete = requests.post('http://exp-api:8000/api/vi/logout/')
+    delete = requests.post('http://exp-api:8000/api/v1/logout/', data={'auth':auth})
     return response
 # # =======
 # 	auth = request.COOKIES.get('auth')
@@ -77,6 +77,9 @@ def logout(request):
 # # >>>>>>> ff78f3d1f9dfc1759cd5b4729c237fadfe533c18
 
 def addjob(request):
+    auth = request.COOKIES.get('auth')
+    if not auth:
+        return HttpResponseRedirect(reverse('login'))
     if request.method == 'GET':
         form = JobForm()
         return render(request, 'home/addjob.html', {'form': form})

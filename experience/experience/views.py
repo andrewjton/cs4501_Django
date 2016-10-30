@@ -34,10 +34,10 @@ def login(request):
             return JsonResponse(auth_resp)
     #else wrong password
     return JsonResponse({'ok':False,'resp':'invalid password'})
-
+@csrf_exempt
 def logout(request):
     auth = request.POST.get('auth', 'default')
-    response = requests.post('http://models-api:8000/api/v1/auth/d/',data={'auth':auth})
+    response = requests.post('http://models-api:8000/api/v1/auth/d/',data={'auth':auth}).json()
     return JsonResponse(response)
     
     
