@@ -36,8 +36,8 @@
        
       </ul>
 	      <ul class="nav navbar-nav">
+
       {% if user.is_authenticated %}
-          <li><a href="/logout/">Logout</a></li>
 		  
 
       {% else %}
@@ -46,6 +46,8 @@
 
           <li><a href="/login/">Login</a></li>
       {% endif %}
+	  		<li><a href="/logout/">Logout</a></li>
+
   </ul>
       <form class="navbar-form navbar-right" role="search">
         <div class="form-group">

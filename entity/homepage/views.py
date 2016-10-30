@@ -252,6 +252,15 @@ def getAuth(request, token):
         return _error_response("token not found")
     return _success_response(request)
 
+def getUser_fromAuth(request, token):
+    if request.method != 'GET':
+        return _error_response(request, 'must make GET request')
+    try:
+        auth = Authenticator.objects.get(pk=token)
+    except:
+        return _error_response("user not found")
+    return _success_response(request)
+
 def deleteAuth(request):
     if request.method != 'POST':
         return _error_response(request, 'must make POST request')

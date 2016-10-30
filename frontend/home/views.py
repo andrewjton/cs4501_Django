@@ -48,13 +48,23 @@ def login(request):
     response = HttpResponseRedirect(reverse('index'))
     response.set_cookie("auth", auth_token)
     return response
+# def logout(request):
+# 	auth = request.COOKIES.get('auth')
+# 	if not auth:
+#         return HttpResponseRedirect(reverse('login'))
+#     response = HttpResponseRedirect('index')
+#     response.delete_cookie("auth")
+#     delete = requests.post('http://exp-api:8000/api/v1/logout/')
+# 	return response;
 
 def logout(request):
-	auth = request.COOKIES.get('auth')
-	if not auth:
-		return HttpResponseRedirect(reverse('login'))
-	response = requests.post('http://exp-ap:8000/api/v1/logout/')
-
+    auth = request.COOKIES.get('auth')
+    if not auth:
+        return HttpResponseRedirect(reverse('login'))
+    response = HttpResponseRedirect('index')
+    response.delete_cookie("auth")
+    delete = requests.post('http://exp-api:8000/api/vi/logout/')
+    return response
 
 def addjob(request):
     auth = request.COOKIES.get('auth')
