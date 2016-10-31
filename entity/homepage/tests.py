@@ -223,7 +223,7 @@ class AuthAPITest(TestCase):
 	
 	def test_create_auth(self):
 		#must make POST request
-		response = self.client.get('/api/v1/auth/n/')
+		response = self.client.get('/api/v1/auth/n/', data={"user_id":1})
 		self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "must make POST request")
 	
 		#missing required fields
@@ -231,12 +231,12 @@ class AuthAPITest(TestCase):
 		self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "missing required fields")
 	
 		#success
-		response = self.client.post('/api/v1/auth/n/', {'user_id' : User.objects.get(pk=1)})
+		response = self.client.post('/api/v1/auth/n/', data={"user_id":1})
 		self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)
 	
 	def test_get_auth(self, token="user1"):
 		#must make GET request
-		response = self.client.post('/api/v1/auth/')
+		response = self.client.post('/api/v1/auth/', {})
 		self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "must make GET request")
 		
 		#token not found
@@ -257,12 +257,8 @@ class AuthAPITest(TestCase):
 		response = self.client.post('/api/v1/auth/d/')
 		self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "missing required fields")
 	
-		#no authenticator
-		response = self.client.post('/api/v1/auth/d/', {'authenticator' : 'incorrect'})
-		self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "deletion error")
-	
 		#success
-		response = self.client.post('/api/v1/auth/d/', {'authenticator' : authenticator})
+		response = self.client.post('/api/v1/auth/d/', {'auth' : authenticator})
 		self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)
 
 	def tearDown(self):

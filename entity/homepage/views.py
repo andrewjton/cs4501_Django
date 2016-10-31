@@ -235,21 +235,19 @@ def createAuth(request):
         token = Authenticator.objects.create(authenticator=code, \
                                              user_id=user, \
                                              date_created=timezone.now())
-
-
     except:
         return _error_response(request, "creation error")
     return _success_response(request, code)
 
 #should be post request for security?
 def getAuth(request, token):
-    if request.method != 'GET':
-        return _error_response(request, 'must make GET request')
-    try:
-        auth = Authenticator.objects.get(pk=token)
-    except:
-        return _error_response("token not found")
-    return _success_response(request)
+	if request.method != 'GET':
+		return _error_response(request, "must make GET request")
+	try:
+		auth = Authenticator.objects.get(pk=token)
+	except:
+		return _error_response("token not found")
+	return _success_response(request)
 
 
 def deleteAuth(request):
