@@ -246,7 +246,7 @@ def getAuth(request, token):
 	try:
 		auth = Authenticator.objects.get(pk=token)
 	except:
-		return _error_response("token not found")
+		return _error_response(request, "token not found")
 	return _success_response(request)
 
 

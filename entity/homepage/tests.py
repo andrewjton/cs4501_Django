@@ -236,15 +236,15 @@ class AuthAPITest(TestCase):
 	
 	def test_get_auth(self, token="user1"):
 		#must make GET request
-		response = self.client.post('/api/v1/auth/', {})
+		response = self.client.post('/api/v1/auth/1000/', data={})
 		self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "must make GET request")
 		
 		#token not found
-		response = self.client.get('/api/v1/auth/', {'token' : 10000})
+		response = self.client.get('/api/v1/auth/1000/')
 		self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "token not found")
 	
 		#success
-		response = self.client.get('/api/v1/auth/', {'token' : token})
+		response = self.client.get('/api/v1/auth/authenticator/')
 		self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)
 		
 	
