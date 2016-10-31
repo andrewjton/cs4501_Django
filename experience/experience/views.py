@@ -16,7 +16,6 @@ def getJob(request, jobID):
     job = requests.get('http://models-api:8000/api/v1/job/' + str(jobID) + '/').json()['resp']
     return JsonResponse({'resp': job})
 
-@csrf_exempt #need to remove later??
 def login(request):
     username = request.POST.get('username', 'none')
     posted_pass = request.POST.get('password', 'none')
@@ -34,14 +33,12 @@ def login(request):
             return JsonResponse(auth_resp)
     #else wrong password
     return JsonResponse({'ok':False,'resp':'invalid password'})
-@csrf_exempt
+
 def logout(request):
     auth = request.POST.get('auth', 'default')
     response = requests.post('http://models-api:8000/api/v1/auth/d/',data={'auth':auth}).json()
     return JsonResponse(response)
     
-    
-@csrf_exempt
 def createJob(request):
 #	return JsonResponse({'resp': 'hi'})
     price = request.POST.get('price', 'default')
@@ -53,7 +50,6 @@ def createJob(request):
     response = requests.post('http://models-api:8000/api/v1/job/n/', data={'price': price, 'location': location, 'name': name, 'description': description, 'owner':owner, 'cleaner':cleaner}).json()
     return JsonResponse(response,safe=False)
 
-@csrf_exempt
 def register(request):
     username = request.POST.get('username', 'none')
     password = request.POST.get('password', 'none')

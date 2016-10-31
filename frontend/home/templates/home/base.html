@@ -37,15 +37,15 @@
       </ul>
 	      <ul class="nav navbar-nav">
 
-   {% if auth == "None" %}
-
-     <li><a href="/logout/">Logout</a></li>
-     <li><a href="/addjob/">Add Job</a></li>
-
-     {% else %}
+   {% if not auth %}
       <li><a href="/login/">Login</a></li>
       
           <li><a href="/register/">Register</a></li>
+     
+
+     {% else %}
+  <li><a href="/logout/">Logout</a></li>
+  <li><a href="/addjob/">Add Job</a></li>
      {% endif %}
 	  		
 
@@ -64,8 +64,6 @@
 	        <div class="container">
 				<h1>{% block page_header %}{% endblock %}</h1>
 	            {% block body_block %}{% endblock %}
-				
-				
 	        </div>
 
 	      
