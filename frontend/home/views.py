@@ -16,8 +16,9 @@ from django.utils import timezone
 
 
 def index(request):
-    response = requests.get('http://exp-api:8000/api/v1/job/all/').json()['resp']
-    return render(request, 'home/index.html', {'allJobs': response})
+	auth = request.COOKIES.get('auth')
+	response = requests.get('http://exp-api:8000/api/v1/job/all/').json()['resp']
+	return render(request, 'home/index.html', {'allJobs': response, 'auth':auth})
 
 def about(request):
     return render(request, 'home/about.html', {})
@@ -63,11 +64,11 @@ def addjob(request):
         return HttpResponseRedirect(reverse('login'))
     if request.method == 'GET':
         form = JobForm()
-        return render(request, 'home/addjob.html', {'form': form})
+        return render(request, 'home/addjob.html', {'form': form, 'auth':auth})
     f = JobForm(request.POST)
     if not f.is_valid():
         form = JobForm()
-        return render(request, 'home/addjob.html', {'errorMessage': "Please fill out all fields",'form': form})
+        return render(request, 'home/addjob.html', {'errorMessage': "Please fill out all fields",'form': form, 'auth':auth})
     name = f.cleaned_data['name']
     description = f.cleaned_data['description']
     price = f.cleaned_data['price']
@@ -82,7 +83,7 @@ def addjob(request):
                                                                            'description': description}).json()
     if not response['ok']:
         #error occurred
-        return render(request, 'home/addjob.html', {'errorMessage': response['resp'],'form': form})
+        return render(request, 'home/addjob.html', {'errorMessage': response['resp'],'form': form, 'auth':auth})
     response = HttpResponseRedirect('/')
     return response
 
@@ -90,13 +91,14 @@ def logout_view(request):
     logout(request)
 
 def register(request):
+    auth = request.COOKIES.get('auth')
     if request.method =='GET':
         register_form = RegisterForm()
-        return render(request, 'home/register.html', {'form': register_form})
+        return render(request, 'home/register.html', {'form': register_form, 'auth':auth})
     f = RegisterForm(request.POST)
     if not f.is_valid():
         register_form = RegisterForm()
-        return render(request, 'home/register.html', {'errorMessage': "Please fill out all fields", 'form': register_form})
+        return render(request, 'home/register.html', {'errorMessage': "Please fill out all fields", 'form': register_form, 'auth':auth})
     username = f.cleaned_data['username']
     password = f.cleaned_data['password']
     first_name = f.cleaned_data['first_name']
@@ -114,8 +116,9 @@ def register(request):
 
     
 def job(request, jobID):
-    response = requests.get('http://exp-api:8000/api/v1/job/'+str(jobID)+"/")
-    jsonJobsList = json.loads(response.content.decode("utf8"))['resp']    
-    return render(request, 'home/job.html', {'job': jsonJobsList})
+	auth = request.COOKIES.get('auth')
+	response = requests.get('http://exp-api:8000/api/v1/job/'+str(jobID)+"/")
+	jsonJobsList = json.loads(response.content.decode("utf8"))['resp']    
+	return render(request, 'home/job.html', {'job': jsonJobsList, 'auth':auth})
     
     
