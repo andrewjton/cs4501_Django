@@ -222,8 +222,8 @@ def createAuth(request):
     if 'user_id' not in request.POST:
         return _error_response(request, 'missing required fields')
     
-    #if(Authenticator.objects.filter(user_id=request.POST['user_id']).exists()):
-     #   return _error_response(request, 'user already authenticated')
+    if(Authenticator.objects.filter(user_id=request.POST['user_id']).exists()):
+       return _error_response(request, 'user already authenticated')
     try:
         code = hmac.new(key= settings.SECRET_KEY.encode('utf-8'), msg = os.urandom(32), digestmod = 'sha256').hexdigest()
         token = Authenticator.objects.create(authenticator=code, \
