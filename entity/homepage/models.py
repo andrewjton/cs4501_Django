@@ -18,7 +18,7 @@ class Job(models.Model):
     location = models.CharField(max_length=200)
     taken = models.BooleanField()
     owner = models.ForeignKey(User, on_delete=models.CASCADE) #foreign key for owner
-    cleaner = models.ForeignKey(User, related_name="cleaner_job",null=True) #username - not a foreingn key because they don't allow null values
+    cleaner = models.ForeignKey(User, related_name="cleaner_job",null=True) 
     date_created = models.DateTimeField('date created')
     def __str__(self):
         return self.name

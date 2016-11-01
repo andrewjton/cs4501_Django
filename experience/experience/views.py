@@ -20,6 +20,7 @@ def login(request):
     username = request.POST.get('username', 'none')
     posted_pass = request.POST.get('password', 'none')
 
+    #get user from username
     response = requests.get('http://models-api:8000/api/v1/user/'+username+'/').json()
 
     if response['ok'] == True:
@@ -31,8 +32,8 @@ def login(request):
             #create auth
             auth_resp = requests.post('http://models-api:8000/api/v1/auth/n/', data={"user_id":user['user_id']}).json()
             return JsonResponse(auth_resp)
-    #else wrong password
-    return JsonResponse({'ok':False,'resp':'invalid password'})
+    return JsonResponse(response)
+    #return JsonResponse({'ok':False,'resp':'invalid password'})
 
 def logout(request):
     auth = request.POST.get('auth', 'default')
@@ -42,12 +43,16 @@ def logout(request):
 def createJob(request):
 #	return JsonResponse({'resp': 'hi'})
     price = request.POST.get('price', 'default')
-    owner = request.POST.get('owner', 'default')
-    cleaner = request.POST.get('cleaner', 'default')
     location = request.POST.get('location', 'default')
     name = request.POST.get('name', 'default')
     description = request.POST.get('description', 'default')
-    response = requests.post('http://models-api:8000/api/v1/job/n/', data={'price': price, 'location': location, 'name': name, 'description': description, 'owner':owner, 'cleaner':cleaner}).json()
+    auth = request.POST.get('auth', 'default')
+    #get username from auth
+    response = requests.get('http://models-api:8000/api/v1/auth/gufa/' + auth + '/').json()
+    if not response['ok']:
+        return JsonResponse(response, safe=False)
+    owner = response['resp'] #username as string
+    response = requests.post('http://models-api:8000/api/v1/job/n/', data={'price': price, 'location': location, 'name': name, 'description': description, 'owner':owner}).json()
     return JsonResponse(response,safe=False)
 
 def register(request):
@@ -63,3 +68,6 @@ def register(request):
                                                                          'dob':dob}).json()
     return JsonResponse(user, safe=False)
     
+
+
+

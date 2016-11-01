@@ -17,7 +17,9 @@ urlpatterns = [
     url(r'^job/(?P<job_id>[0-9]+)/$', views.getJob, name='getJob'),
     url(r'^auth/n/$', views.createAuth, name='createAuth'),
     url(r'^auth/d/$', views.deleteAuth, name='deleteAuth'),
+    url(r'^auth/gufa/(?P<token>[\w.@+-]+)/$', views.getUserFromAuth, name='getUserFromAuth'),
     url(r'^auth/(?P<token>[\w.@+-]+)/$', views.getAuth, name='getAuth'),
+
 
 ]
 

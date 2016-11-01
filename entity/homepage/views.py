@@ -122,7 +122,6 @@ def createJob(request):
         'description' not in request.POST or \
         'price' not in request.POST or \
         'location' not in request.POST or \
-        'cleaner' not in request.POST or \
         'owner' not in request.POST:
 		return _error_response(request, "missing required fields")
 	try:
@@ -131,7 +130,6 @@ def createJob(request):
 			price=request.POST['price'],
 			location=request.POST['location'],
 			owner= User.objects.get(username = request.POST['owner']),
-			cleaner=User.objects.get(username = request.POST['cleaner']),
 			date_created = timezone.now(),
 			taken=False)
 		j.save()
@@ -228,12 +226,8 @@ def createAuth(request):
      #   return _error_response(request, 'user already authenticated')
     try:
         code = hmac.new(key= settings.SECRET_KEY.encode('utf-8'), msg = os.urandom(32), digestmod = 'sha256').hexdigest()
-        user = User.objects.get(pk=request.POST['user_id'])
-        #TODO: change user to charfield
-        return JsonResponse({"ok":True,"resp":code})
-
         token = Authenticator.objects.create(authenticator=code, \
-                                             user_id=user, \
+                                             user_id=request.POST['user_id'], \
                                              date_created=timezone.now())
     except:
         return _error_response(request, "creation error")
@@ -249,6 +243,18 @@ def getAuth(request, token):
 		return _error_response(request, "token not found")
 	return _success_response(request)
 
+def getUserFromAuth(request, token):
+    if request.method != 'GET':
+        return _error_response(request, 'must make GET request')
+    try:
+        auth = Authenticator.objects.get(pk=token)
+    except:
+        return _error_response(request, 'token not found')
+    try:
+        user = User.objects.get(id=auth.user_id)
+    except:
+        return _error_response(request, 'user not found')
+    return _success_response(request, user.username)
 
 def deleteAuth(request):
     if request.method != 'POST':

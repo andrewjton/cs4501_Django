@@ -43,7 +43,7 @@ def login(request):
     if  response['ok'] == False:
         #error occurred
         login_form = LoginForm()
-        return render(request, 'home/login.html', {'errorMessage': "Incorrect password",'form': login_form})
+        return render(request, 'home/login.html', {'errorMessage': response['resp'],'form': login_form})
     auth_token = response['resp']
     next = HttpResponseRedirect(reverse('index'))
     next.set_cookie('auth',auth_token)
@@ -73,17 +73,14 @@ def addjob(request):
     description = f.cleaned_data['description']
     price = f.cleaned_data['price']
     location = f.cleaned_data['location']
-    owner = "user1"
-    cleaner = "user1"
     response = requests.post('http://exp-api:8000/api/v1/job/n/', data={'price': price, \
-                                                                            'owner': owner, \
-                                                                           'cleaner': cleaner, \
+                                                                            'auth': auth, \
                                                                            'location': location, \
                                                                            'name': name, \
                                                                            'description': description}).json()
     if not response['ok']:
         #error occurred
-        return render(request, 'home/addjob.html', {'errorMessage': response['resp'],'form': form, 'auth':auth})
+        return render(request, 'home/addjob.html', {'errorMessage': response['resp'],'form': f, 'auth':auth})
     response = HttpResponseRedirect('/')
     return response
 
