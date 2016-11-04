@@ -53,3 +53,4 @@ batch:
    volumes:
       - ./batch:/app
    command: "python batch.py"
+
