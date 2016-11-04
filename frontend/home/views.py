@@ -132,7 +132,7 @@ def search(request):
 	response = requests.post('http://exp-api:8000/api/v1/search/', data={"search":search}).json()
 	if not response['ok']:
 	    return render(request, 'home/search.html', {'errorMessage': response['resp'],'form': f, 'auth':auth})
-	return HttpResponse(response['resp'])
+	return HttpResponse(response['resp'].title)
 	return render(request, 'home/search.html', {'allJobs': response['resp'], 'form': f, 'auth':auth})
 
     
