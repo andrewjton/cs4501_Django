@@ -13,6 +13,25 @@
 		<input type="submit" value="submit" />
 		<input type="hidden" name="next" value="{{ next }}" />
     </form>
-    
+	{% if submit %}
+	<h3> Results </h3>
+	<table class="table table-striped table-hover ">
+	  <thead>
+	    <tr>
+	      <th>Name</th>
+	      <th>Description</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+
+		{% for job in allJobs %}
+	    <tr> 
+	      <td><a href = "{% url 'job' job.id %}">{{job.title}}</a></td>
+	      <td>{{job.description}}</td>
+	    </tr>
+		{% endfor %}
+	  </tbody>
+	</table>
+	{% endif %}
 
  {% endblock %}
