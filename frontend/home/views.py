@@ -117,5 +117,12 @@ def job(request, jobID):
 	response = requests.get('http://exp-api:8000/api/v1/job/'+str(jobID)+"/")
 	jsonJobsList = json.loads(response.content.decode("utf8"))['resp']    
 	return render(request, 'home/job.html', {'job': jsonJobsList, 'auth':auth})
-    
+	
+
+def register(request):
+	auth = request.COOKIES.get('auth')
+	if request.method =='GET':
+		search_form = SearchForm()
+		return render(request, 'home/search.html', {'form': search_form, 'auth':auth})
+
     

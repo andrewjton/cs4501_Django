@@ -18,4 +18,5 @@ class JobForm(forms.Form):
 	price = forms.DecimalField(required=True)
 	location = forms.CharField(required=True)
 
-
+class SearchForm(forms.Form):
+	search = forms.CharField(required=True, label='Query', max_length=50)
