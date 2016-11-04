@@ -124,5 +124,14 @@ def search(request):
 	if request.method =='GET':
 		search_form = SearchForm()
 		return render(request, 'home/search.html', {'form': search_form, 'auth':auth})
+	f = SearchForm(request.POST)
+	if not f.is_valid():
+		search_form = SearchForm()
+		return render(request, 'home/search.html', {'errorMessage': "Please fill out the field", 'form': search_form, 'auth':auth})
+	search = f.cleaned_data['search']
+	response = {'resp': 'hi'} #replace with exp call
+#	if not response['ok']:
+#	    return render(request, 'home/search.html', {'errorMessage': response['resp'],'form': f, 'auth':auth})
+	return render(request, 'home/search.html', {'form': search_form, 'auth':auth})
 
     
