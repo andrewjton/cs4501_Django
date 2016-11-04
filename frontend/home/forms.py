@@ -19,4 +19,4 @@ class JobForm(forms.Form):
 	location = forms.CharField(required=True)
 
 class SearchForm(forms.Form):
-	search = forms.CharField(required=True, label='Query', max_length=50)
+	search = forms.CharField(required=True, label='What are you searching for?', max_length=50)
