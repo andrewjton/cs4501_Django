@@ -13,5 +13,6 @@ urlpatterns = patterns('',
       url(r'^api/v1/logout/$', views.logout, name='logout'),
       url(r'^api/v1/register/$', views.register, name='register'),
 	  url(r'^api/v1/job/n/$', views.createJob, name='createJob'),
+	  url(r'^api/v1/search/$', views.search, name='search'),
 
 )

@@ -129,9 +129,9 @@ def search(request):
 		search_form = SearchForm()
 		return render(request, 'home/search.html', {'errorMessage': "Please fill out the field", 'form': search_form, 'auth':auth})
 	search = f.cleaned_data['search']
-	response = {'resp': 'hi'} #replace with exp call
-#	if not response['ok']:
-#	    return render(request, 'home/search.html', {'errorMessage': response['resp'],'form': f, 'auth':auth})
+	response = requests.post('http://exp-api:8000/api/v1/search/', data={"search":search}).json()
+	if not response['ok']:
+	    return render(request, 'home/search.html', {'errorMessage': response['resp'],'form': f, 'auth':auth})
 	return render(request, 'home/search.html', {'form': search_form, 'auth':auth})
 
     
