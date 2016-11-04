@@ -53,6 +53,13 @@ def createJob(request):
         return JsonResponse(response, safe=False)
     owner = response['resp'] #username as string
     response = requests.post('http://models-api:8000/api/v1/job/n/', data={'price': price, 'location': location, 'name': name, 'description': description, 'owner':owner}).json()
+ 
+    #add message to kafka queue
+    if not response['ok']:
+        return JsonResponse(response, safe=False) #if the object isn't created
+    producer = KafkaProducer(bootstrap_servers='kafka:9092')
+    some_new_listing = {'title': name, 'description': description, 'id':response['resp']['id']}
+    producer.send('new-listings-topic', json.dumps(some_new_listing).encode('utf-8'))
     return JsonResponse(response,safe=False)
 
 def register(request):
