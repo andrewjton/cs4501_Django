@@ -119,7 +119,7 @@ def job(request, jobID):
 	return render(request, 'home/job.html', {'job': jsonJobsList, 'auth':auth})
 	
 
-def register(request):
+def search(request):
 	auth = request.COOKIES.get('auth')
 	if request.method =='GET':
 		search_form = SearchForm()
