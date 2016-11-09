@@ -78,20 +78,19 @@ def register(request):
     return JsonResponse(user, safe=False)
     
 def search(request):
-	if request.method =='GET':
-		return JsonResponse({'ok':False, 'resp':'must make POST request'})
-	search = request.POST.get('search', 'default')
-	es = Elasticsearch(['es'])
-	if(es.indices.exists('listing_index')):
-		result = es.search(index='listing_index', body={'query': {'query_string': {'query': search}}, 'size': 10})
-		jobs_data = result['hits']['hits']
-		job_list = []
-		for job in jobs_data:
-			jobs = {}
-			jobs['title'] = job['_source']['title']
-			jobs['id'] = job['_source']['id']
-			jobs['description'] = job['_source']['description']
-			posts_list.append(posts)
-		return JsonResponse({'ok':True, 'resp':job_list}, safe=False)
-	return JsonResponse({'ok':False, 'resp':'no index created'})
-	
+    if 'search' not in request.POST:
+        return JsonResponse({'ok':False, 'resp':'no query string'})
+    search = request.POST.get('search')
+    es = Elasticsearch(['es'])
+    if(es.indices.exists('listing_index')):
+        result = es.search(index='listing_index', body={'query': {'query_string': {'query': search}}, 'size': 10})
+        jobs_data = result['hits']['hits']
+        job_list = []
+        for job in jobs_data:
+            jobs = {}
+            jobs['title'] = job['_source']['title']
+            jobs['id'] = job['_source']['id']
+            jobs['description'] = job['_source']['description']
+            job_list.append(jobs)
+        return JsonResponse({'ok':True, 'resp':job_list}, safe=False)
+    return JsonResponse({'ok':False, 'resp':'no index created'})
