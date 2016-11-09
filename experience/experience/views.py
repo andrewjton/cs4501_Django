@@ -78,9 +78,9 @@ def register(request):
     return JsonResponse(user, safe=False)
 
 def search(request):
-    if 'search' not in request.POST:
-        return JsonResponse({'ok':False, 'resp':'no query string'})
-    search = request.POST.get('search')
+	if 'search' not in request.POST:
+		return JsonResponse({'ok':False, 'resp':'no query string'})
+	search = request.POST.get('search')
 	es = Elasticsearch(['es'])
 	if(es.indices.exists('listing_index')):
 		result = es.search(index='listing_index', body={'query': {'query_string': {'query': search}}, 'size': 10})
