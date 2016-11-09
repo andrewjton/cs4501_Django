@@ -60,7 +60,7 @@ def createJob(request):
     if not response['ok']:
         return JsonResponse(response, safe=False) #if the object isn't created
     producer = KafkaProducer(bootstrap_servers='kafka:9092')
-    some_new_listing = {'title': name, 'description': description, 'id':response['resp']['id']}
+    some_new_listing = {'title': name, 'description': description, 'id':response['resp']['job_id']}
     producer.send('new-listings-topic', json.dumps(some_new_listing).encode('utf-8'))
     return JsonResponse(response,safe=False)
 
@@ -78,6 +78,8 @@ def register(request):
     return JsonResponse(user, safe=False)
     
 def search(request):
+	if request.method =='GET':
+		return JsonResponse({'ok':False, 'resp':'must make POST request'})
 	search = request.POST.get('search', 'default')
 	es = Elasticsearch(['es'])
 	if(es.indices.exists('listing_index')):
@@ -90,5 +92,6 @@ def search(request):
 			jobs['id'] = job['_source']['id']
 			jobs['description'] = job['_source']['description']
 			posts_list.append(posts)
-		return JsonResponse(job_list, safe=False)
+		return JsonResponse({'ok':True, 'resp':job_list}, safe=False)
 	return JsonResponse({'ok':False, 'resp':'no index created'})
+	

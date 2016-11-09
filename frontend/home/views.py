@@ -68,7 +68,7 @@ def addjob(request):
     f = JobForm(request.POST)
     if not f.is_valid():
         form = JobForm()
-        return render(request, 'home/addjob.html', {'errorMessage': "Please fill out all fields",'form': form, 'auth':auth})
+        return render(request, 'home/addjob.html', {'errorMessage': "Please fill out all fields",'form': f, 'auth':auth})
     name = f.cleaned_data['name']
     description = f.cleaned_data['description']
     price = f.cleaned_data['price']
@@ -123,15 +123,15 @@ def search(request):
 	auth = request.COOKIES.get('auth')
 	if request.method =='GET':
 		search_form = SearchForm()
-		return render(request, 'home/search.html', {'form': search_form, 'auth':auth, 'submit': False})
+		return render(request, 'home/search.html', {'form': f, 'auth':auth, 'submit': False})
 	f = SearchForm(request.POST)
 	if not f.is_valid():
 		search_form = SearchForm()
-		return render(request, 'home/search.html', {'errorMessage': "Please fill out the field", 'form': search_form, 'auth':auth, 'submit': False})
+		return render(request, 'home/search.html', {'errorMessage': "Please fill out the field", 'form': f, 'auth':auth, 'submit': False})
 	search = f.cleaned_data['search']
 	response = requests.post('http://exp-api:8000/api/v1/search/', data={"search":search}).json()
 	if not response['ok']:
 	    return render(request, 'home/search.html', {'errorMessage': response['resp'],'form': f, 'auth':auth, 'submit': False})
-	return render(request, 'home/search.html', {'allJobs': response, 'form': search_form, 'auth':auth, 'submit': True})
+	return render(request, 'home/search.html', {'allJobs': response, 'form': f, 'auth':auth, 'submit': True})
 
     
