@@ -21,7 +21,8 @@ def index(request):
 	return render(request, 'home/index.html', {'allJobs': response, 'auth':auth})
 
 def about(request):
-    return render(request, 'home/about.html', {})
+	auth = request.COOKIES.get('auth')
+	return render(request, 'home/about.html', {'auth':auth})
 
 #front end  for recieving user input
 
