@@ -34,6 +34,8 @@ def login(request):
             #create auth
             auth_resp = requests.post('http://models-api:8000/api/v1/auth/n/', data={"user_id":user['user_id']}).json()
             return JsonResponse(auth_resp)
+        else:
+            return JsonResponse({'ok':False,'resp':'invalid password'})
     return JsonResponse(response)
     #return JsonResponse({'ok':False,'resp':'invalid password'})
 
@@ -76,21 +78,21 @@ def register(request):
                                                                          'last_name':last_name,
                                                                          'dob':dob}).json()
     return JsonResponse(user, safe=False)
-    
+
 def search(request):
-    if 'search' not in request.POST:
-        return JsonResponse({'ok':False, 'resp':'no query string'})
-    search = request.POST.get('search')
-    es = Elasticsearch(['es'])
-    if(es.indices.exists('listing_index')):
-        result = es.search(index='listing_index', body={'query': {'query_string': {'query': search}}, 'size': 10})
-        jobs_data = result['hits']['hits']
-        job_list = []
-        for job in jobs_data:
-            jobs = {}
-            jobs['title'] = job['_source']['title']
-            jobs['id'] = job['_source']['id']
-            jobs['description'] = job['_source']['description']
-            job_list.append(jobs)
-        return JsonResponse({'ok':True, 'resp':job_list}, safe=False)
-    return JsonResponse({'ok':False, 'resp':'no index created'})
+	if 'search' not in request.POST:
+		return JsonResponse({'ok':False, 'resp':'no query string'})
+	search = request.POST.get('search')
+	es = Elasticsearch(['es'])
+	if(es.indices.exists('listing_index')):
+		result = es.search(index='listing_index', body={'query': {'query_string': {'query': search}}, 'size': 10})
+		jobs_data = result['hits']['hits']
+		job_list = []
+		for job in jobs_data:
+			jobs = {}
+			jobs['title'] = job['_source']['title']
+			jobs['id'] = job['_source']['id']
+			jobs['description'] = job['_source']['description']
+			job_list.append(jobs)
+		return JsonResponse({'ok':True, 'resp':job_list}, safe=False)
+	return JsonResponse({'ok':False, 'resp':'no index created'})

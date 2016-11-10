@@ -20,8 +20,9 @@ def index(request):
 	response = requests.get('http://exp-api:8000/api/v1/job/all/').json()['resp']
 	return render(request, 'home/index.html', {'allJobs': response, 'auth':auth})
 
-def about(request): 
-    return render(request, 'home/about.html', {})
+def about(request):
+	auth = request.COOKIES.get('auth')
+	return render(request, 'home/about.html', {'auth':auth})
 
 #front end  for recieving user input
 
@@ -68,7 +69,7 @@ def addjob(request):
     f = JobForm(request.POST)
     if not f.is_valid():
         form = JobForm()
-        return render(request, 'home/addjob.html', {'errorMessage': "Please fill out all fields",'form': form, 'auth':auth})
+        return render(request, 'home/addjob.html', {'errorMessage': "Please fill out all fields",'form': f, 'auth':auth})
     name = f.cleaned_data['name']
     description = f.cleaned_data['description']
     price = f.cleaned_data['price']
@@ -131,8 +132,6 @@ def search(request):
 	search = f.cleaned_data['search']
 	response = requests.post('http://exp-api:8000/api/v1/search/', data={"search":search}).json()
 	if not response['ok']:
-	    return render(request, 'home/search.html', {'errorMessage': response['resp'],'form': f, 'auth':auth, 'submit':False})
-	#return HttpResponse(response['resp'].title)
+		return render(request, 'home/search.html', {'errorMessage': response['resp'],'form': f, 'auth':auth, 'submit':False})
+		#return HttpResponse(response['resp'].title)
 	return render(request, 'home/search.html', {'allJobs': response['resp'], 'form': f, 'auth':auth, 'submit':True})
-
-    
