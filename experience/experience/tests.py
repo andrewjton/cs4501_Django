@@ -33,7 +33,8 @@ class SearchTest(TestCase):
 		self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "No results found")
 	
 		#success
-		response = self.client.post('/api/v1/search/', data={"search":'name'})
+		response = self.client.post('/api/v1/search/', data={"search":'description'})
+
 		self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)
 	
 	def tearDown(self):

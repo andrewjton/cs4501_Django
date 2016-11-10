@@ -34,6 +34,8 @@ def login(request):
             #create auth
             auth_resp = requests.post('http://models-api:8000/api/v1/auth/n/', data={"user_id":user['user_id']}).json()
             return JsonResponse(auth_resp)
+        else:
+            return JsonResponse({'ok':False,'resp':'invalid password'})
     return JsonResponse(response)
     #return JsonResponse({'ok':False,'resp':'invalid password'})
 
