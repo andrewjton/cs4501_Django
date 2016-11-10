@@ -10,8 +10,6 @@ import requests
 class SearchTest(TestCase):
 
 	def setUp(self):
-		
-
 		user = self.client.post('/api/v1/user/n/', {'username' : 'user1', 'password' : 'password', 'first_name' : 'first_name', 'last_name' : 'last_name', 'dob' : timezone.now()})
 		user = requests.get('http://models-api:8000/api/v1/user/user1').json()
 		request = requests.post('http://models-api:8000/api/v1/auth/n/', data={'user_id': user['resp']['user_id']}).json()
