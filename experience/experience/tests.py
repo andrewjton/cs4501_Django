@@ -11,7 +11,10 @@ class SearchTest(TestCase):
 
 	def setUp(self):
 		
-		request = requests.post('http://models-api:8000/api/v1/auth/n/', data={'user_id': 'user1'}).json()
+
+		user = self.client.post('/api/v1/user/n/', {'username' : 'user1', 'password' : 'password', 'first_name' : 'first_name', 'last_name' : 'last_name', 'dob' : timezone.now()})
+		user = requests.get('http://models-api:8000/api/v1/user/user1').json()
+		request = requests.post('http://models-api:8000/api/v1/auth/n/', data={'user_id': user['resp']['user_id']}).json()
 		if request['ok']:
 			token = request['resp']
 			response = self.client.post('/api/v1/job/n/', data={'price': 11, \
@@ -33,7 +36,7 @@ class SearchTest(TestCase):
 		self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "No results found")
 	
 		#success
-		response = self.client.post('/api/v1/search/', data={"search":'description'})
+		response = self.client.post('/api/v1/search/', data={"search":'name'})
 
 		self.assertEqual(json.loads(response.content.decode('utf8'))['ok'], True)
 	
