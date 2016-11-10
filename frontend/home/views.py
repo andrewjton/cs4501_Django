@@ -20,7 +20,7 @@ def index(request):
 	response = requests.get('http://exp-api:8000/api/v1/job/all/').json()['resp']
 	return render(request, 'home/index.html', {'allJobs': response, 'auth':auth})
 
-def about(request):
+def about(request): 
     return render(request, 'home/about.html', {})
 
 #front end  for recieving user input
