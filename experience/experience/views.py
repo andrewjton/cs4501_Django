@@ -78,6 +78,8 @@ def register(request):
     return JsonResponse(user, safe=False)
 
 def search(request):
+	if request.method != 'POST':
+		return JsonResponse({'ok':False, 'resp':'must make POST request'})
 	if 'search' not in request.POST:
 		return JsonResponse({'ok':False, 'resp':'no query string'})
 	search = request.POST.get('search')
