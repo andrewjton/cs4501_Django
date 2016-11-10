@@ -6,6 +6,7 @@ import experience.views
 from django.forms.models import model_to_dict
 from django.contrib.auth import hashers
 import requests
+import time
 
 class SearchTest(TestCase):
 
@@ -21,6 +22,7 @@ class SearchTest(TestCase):
                                                                            'name': 'name', \
                                                                            'description': 'description'})
 	def test_search(self):
+		time.sleep(5)
 		#must make POST request
 		response = self.client.get('/api/v1/search/', data={"search":'word'})
 		self.assertEqual(json.loads(response.content.decode('utf8'))['resp'], "must make POST request")
