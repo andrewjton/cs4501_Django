@@ -93,4 +93,4 @@ def search(request):
 			jobs['description'] = job['_source']['description']
 			job_list.append(jobs)
 		return JsonResponse({'ok':True, 'resp':job_list}, safe=False)
-	return JsonResponse({'ok':False, 'resp':'no index created'})
+	return JsonResponse({'ok':False, 'resp':'No results found'})
