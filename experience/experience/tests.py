@@ -5,12 +5,17 @@ from django.utils import timezone
 import experience.views
 from django.forms.models import model_to_dict
 from django.contrib.auth import hashers
+import requests
 
 class SearchTest(TestCase):
 
 	def setUp(self):
-		response = self.client.post('/api/v1/job/n/', data={'price': 11, \
-                                                                            'auth': 'auth', \
+		
+		request = requests.post('http://models-api:8000/api/v1/auth/n/', data={'user_id': 'user1'}).json()
+		if request['ok']:
+			token = request['resp']
+			response = self.client.post('/api/v1/job/n/', data={'price': 11, \
+                                                                            'auth': token, \
                                                                            'location': 'location', \
                                                                            'name': 'name', \
                                                                            'description': 'description'})
