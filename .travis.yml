@@ -25,8 +25,7 @@ before_script:
 
 script:
   - >
-    docker exec -it models bash -c     # 'models' is the name of the docker container
-    #"pip install -r requirements.txt &&
+    docker exec -it cs4501_models_1 bash -c     # 'models' is the name of the docker container
     "python manage.py test --noinput" # run Django unit tests on models
   # can put other tests (e.g. integrations) here too with exp, web containers
 
