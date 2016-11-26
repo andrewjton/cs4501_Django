@@ -24,10 +24,10 @@ before_script:
   - docker-compose up -d
 
 script:
-  -> docker ps -a
-  - >
-    docker exec -it models_1 bash -c   
-    "python manage.py test --noinput" # run Django unit tests on models
+  - docker ps -a
+  #- >
+  #  docker exec -it models_1 bash -c   
+  #  "python manage.py test --noinput" # run Django unit tests on models
 
 after_script:
   - docker-compose stop
