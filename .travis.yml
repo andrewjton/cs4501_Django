@@ -1,11 +1,8 @@
 sudo: required
 dist: trusty # google-cloud-engine mod of ubuntu 14.04.3 LTS
-
-# if specific versions of docker or docker-compose are needed, see travis-CI docs
 services:
   - docker # default is docker 1.8.2 and docker-compose 1.4.2 (as of Oct. 2016)
-
-install: # prepare mySQL database
+install:
   - docker pull mysql:5.7.14
   - mkdir db
   - >
@@ -19,18 +16,15 @@ install: # prepare mySQL database
     CREATE DATABASE test_cs4501 CHARACTER SET utf8;
     CREATE USER 'www'@'%' IDENTIFIED BY '\$3cureUS';
     GRANT ALL PRIVILEGES ON *.* TO 'www'@'%';"
-
 before_script:
   - docker-compose up -d
-
 script:
   - >
     docker exec -it cs4501django_models_1 bash -c   
     "python manage.py test --noinput" # run Django unit tests on models
   - >
-    docker exec -it cs4501django_web_1 bash -c   
+    docker exec -it cs4501django_exp_1 bash -c   
     "python manage.py test" # run Django unit tests on models
-    
 after_script:
   - docker-compose stop
   - docker stop mysql
