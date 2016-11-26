@@ -1,4 +1,5 @@
-## Project 4 User Stories https://travis-ci.org/wonton00/cs4501_Django.svg?branch=master
+###Status [![Build Status](https://travis-ci.org/wonton00/cs4501_Django.svg?branch=master)](https://travis-ci.org/wonton00/cs4501_Django)
+## Project 4 User Stories 
 * As a user, I want to be able to log out of my account [def logout()]
 * As a user, I want to be able to log into my account [def login()]
 * As a job-seeking client, I would like to create an account. [def create_user()]

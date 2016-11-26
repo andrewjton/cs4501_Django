@@ -27,7 +27,10 @@ script:
   - >
     docker exec -it cs4501django_models_1 bash -c   
     "python manage.py test --noinput" # run Django unit tests on models
-
+  - >
+    docker exec -it cs4501django_web_1 bash -c   
+    "python manage.py test" # run Django unit tests on models
+    
 after_script:
   - docker-compose stop
   - docker stop mysql
