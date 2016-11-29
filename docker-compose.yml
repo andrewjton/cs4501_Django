@@ -2,8 +2,6 @@ models:
     image: tp33/django
     external_links:
         - mysql:db
-    ports:
-        - "8001:8000"
     volumes:
         - ./entity:/app
     command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py loaddata db.json && mod_wsgi-express start-server --reload-on-changes wiz/wsgi.py" 
@@ -14,8 +12,6 @@ exp:
         - models:models-api
         - kafka:kafka
         - es:es
-    ports:
-        - "8002:8000"
     volumes:
         - ./experience:/app
     command: bash -c "pip install requests && mod_wsgi-express start-server --reload-on-changes experience/wsgi.py"
