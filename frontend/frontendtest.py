@@ -43,6 +43,10 @@ class FrontendTest(unittest.TestCase):
         
         #check job created page
         driver.find_element_by_link_text(job_name).click()
+        assert job_name in driver.page_source
+        assert job_description in driver.page_source
+        assert job_loc in driver.page_source
+        assert "$"+str(job_price)+".00" in driver.page_source
         driver.find_element_by_xpath("""/html/body/div/div/a""").click()
         
         
