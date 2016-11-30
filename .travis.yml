@@ -1,14 +1,21 @@
-sudo: required
-dist: trusty # google-cloud-engine mod of ubuntu 14.04.3 LTS
+#Travis works by replicating our dev environment, pulling the most recent version of docker and running the unit test
+#on its own servers. These instructions are configured in a .travis.yml. The configuration file allows you to specify
+#the distribution (trusty, a sudo-enabled ubuntu distribution), necessary installations (docker and mysql image), and the
+#scripts to run for the test.
+
+sudo: required #used to make admin level requirements.
+dist: trusty # sudo-enabled ubuntu distribution
 services:
   - docker # default is docker 1.8.2 and docker-compose 1.4.2 (as of Oct. 2016)
+#installs and sets up the dependences such as mysql db, and its docker image (commands identical to project 1).
+#Essentially, sets up the dev environment. 
 install:
   - docker pull mysql:5.7.14
   - mkdir db
   - >
     docker run --name mysql -d -e MYSQL_ROOT_PASSWORD='$3cureUS'
     -v `pwd`/db:/var/lib/mysql mysql:5.7.14
-  - sleep 10 # need to give time for mysql to start
+  - sleep 10 # pauses script in order to allow docker container to boot.
   - >
     docker run -it --name mysql-cmd --rm --link mysql:db mysql:5.7.14
     mysql -uroot -p'$3cureUS' -h db -v -e
@@ -16,19 +23,19 @@ install:
     CREATE DATABASE test_cs4501 CHARACTER SET utf8;
     CREATE USER 'www'@'%' IDENTIFIED BY '\$3cureUS';
     GRANT ALL PRIVILEGES ON *.* TO 'www'@'%';"
+#runs before the script. fails independently.
 before_script:
   - docker-compose up -d
+#the actual test
 script:
   - >
     docker exec -it cs4501django_models_1 bash -c   
     "python manage.py test --noinput" # run Django unit tests on models
-  #- >
-  #  docker exec -it cs4501django_exp_1 bash -c   
-  #  "python manage.py test" # run Django unit tests on models
+#runs after the script. fails independently. powering down the dev environment and cleaning the environment.
 after_script:
-  - docker-compose stop
-  - docker stop mysql
-  - docker rm `docker ps -a -q`
-  - docker rmi `docker images -q`
-  - rm -rf db
+  - docker-compose stop #stops all docker-compose containers
+  - docker stop mysql #stops mysql container 
+  - docker rm `docker ps -a -q` #removes all containers
+  - docker rmi `docker images -q` #removes all docker images
+  - rm -rf db #deletes db folder
   

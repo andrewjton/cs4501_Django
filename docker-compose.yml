@@ -24,7 +24,7 @@ web:
         - "8000:8000"
     volumes:
         - ./frontend:/app
-    command: bash -c "pip install requests && mod_wsgi-express start-server --reload-on-changes frontend/wsgi.py"
+    command: bash -c "pip install selenium && pip install requests && mod_wsgi-express start-server --reload-on-changes frontend/wsgi.py"
 #kafka + zookeeper
 kafka: 
    image: spotify/kafka
