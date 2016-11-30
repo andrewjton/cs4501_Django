@@ -4,10 +4,13 @@ from selenium.webdriver.common.keys import Keys
 import os, time,datetime
 
 profile = webdriver.FirefoxProfile()
-driver = webdriver.Chrome(os.path.abspath("/Users/brandonpeck/Downloads/chromedriver"))
+driver = webdriver.Chrome(os.path.abspath("chromedriver"))
 driver.get("http://104.131.103.41:8000/")
-#assert "Welcome to AirClean" in driver.title
-username = "useruser2"
+
+#assert correct page
+assert "Welcome to AirClean" in driver.page_source
+
+username = "useruser" + str(datetime.datetime.now())[-6:]
 password = "password"
 #register
 driver.find_element_by_xpath("""//*[@id="bs-example-navbar-collapse-1"]/ul[2]/li[2]/a""").click()
@@ -23,7 +26,7 @@ driver.find_element_by_xpath("""//*[@id="id_password"]""").send_keys(password)
 driver.find_element_by_xpath("""/html/body/div/form/input[2]""").click()
 
 #add job
-job_name ="new job 2"
+job_name ="new job "+str(datetime.datetime.now())[-6:]
 job_description ="description"
 job_price = 5
 job_loc ="Hartford, CT"
@@ -38,7 +41,7 @@ driver.find_element_by_xpath("""/html/body/div/form/input[2]""").click()
 assert job_name in driver.page_source
 
 #check job created page
-driver.find_element_by_link_text("""new job 1""").click()
+driver.find_element_by_link_text(job_name).click()
 driver.find_element_by_xpath("""/html/body/div/div/a""").click()
 
 
